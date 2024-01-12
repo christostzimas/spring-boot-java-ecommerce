@@ -1,30 +1,34 @@
 package com.ct_ecommerce.eshop.Product;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Products")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Product {
 
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) int id;
+    @Column(name = "title", nullable = false)
     private String title;
+    @Column(name = "description", nullable = false)
     private String description;
-    private double price;
+    //private double price;
     private double discount;
+    @Column(name = "stock", nullable = false)
     private int stock;
     private int sales;
+    @Column(name = "brand", nullable = false)
     private String brand;
+    @Column(name = "category", nullable = false)
     private String category;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 
-    public Product(int idProduct, String titleProduct, String descriptionProduct, double priceProduct, double discountPrice, int stockProduct, String brandProduct, String categoryProduct) {
+    public Product(int idProduct, String titleProduct, String descriptionProduct, double discountPrice, int stockProduct, String brandProduct, String categoryProduct) {
         this.id = idProduct;
         this.title = titleProduct;
         this.description = descriptionProduct;
-        this.price = priceProduct;
         this.discount = discountPrice;
         this.stock = stockProduct;
         this.sales = 0;
@@ -34,10 +38,9 @@ public class Product {
         this.created_at = LocalDateTime.now();
     }
 
-    public Product(String titleProduct, String descriptionProduct, double priceProduct, double discountPrice, int stockProduct, String brandProduct, String categoryProduct) {
+    public Product(String titleProduct, String descriptionProduct, double discountPrice, int stockProduct, String brandProduct, String categoryProduct) {
         this.title = titleProduct;
         this.description = descriptionProduct;
-        this.price = priceProduct;
         this.discount = discountPrice;
         this.stock = stockProduct;
         this.sales = 0;
@@ -51,11 +54,11 @@ public class Product {
     }
 
     //calculate discounts
-    public double discountPercentage(){
-        if(this.discount == 0){
-            return this.price;
+    public double discountPercentage(double price, double discount){
+        if(discount == 0){
+            return price;
         }
-        return this.price - (this.price - this.discount/100);
+        return price - (price * discount/100);
     }
 
     public int getId() {
@@ -80,14 +83,6 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     public double getDiscount() {
@@ -146,5 +141,19 @@ public class Product {
         this.updated_at = updated_at;
     }
 
-    // toString ??????
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", discount=" + discount +
+                ", stock=" + stock +
+                ", sales=" + sales +
+                ", brand='" + brand + '\'' +
+                ", category='" + category + '\'' +
+                ", created_at=" + created_at +
+                ", updated_at=" + updated_at +
+                '}';
+    }
 }

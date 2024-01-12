@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/products")   //route prefix
 public class ProductController {
 
     private final ProductService productService;
@@ -15,27 +16,36 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping(path = "products")
+    //list all products
+    @GetMapping(path = "/")
     public List<Product> getProducts(){
         return productService.getProducts();
     }
 
-    @PostMapping(path = "products/create")
+    //create new product
+    @PostMapping(path = "/create")
     public void store(@RequestBody Product product){
         System.out.println(product);
         productService.addNewProduct(product);
     }
 
-    @DeleteMapping(path = "products/{productID}")
+    //update product
+    @PatchMapping(path = "/{productID}")
+    public void updateStudent(@PathVariable("productID") int id, @RequestBody  Product product){
+        //validation
+        productService.updateProduct(id, product);
+    }
+
+    //delete product
+    @DeleteMapping(path = "/{productID}")
     public void destroy(@PathVariable("productID") int id){
         //force not null
         productService.deleteProduct(id);
     }
 
-    @PatchMapping(path = "products/{productID}")
-    public void updateStudent(@PathVariable("productID") int id, @RequestBody  Product product){
-        System.out.println(id);
-        System.out.println("controller....");
-        productService.updateProduct(id, product);
+    //get best selling broducts
+    @GetMapping(path = "/bestSellers/{num}")
+    public List<Product> getBestSellers(@PathVariable("num") int number){
+        return productService.getBestSellers(number);
     }
 }

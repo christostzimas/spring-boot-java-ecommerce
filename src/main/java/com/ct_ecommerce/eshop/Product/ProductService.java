@@ -3,6 +3,10 @@ package com.ct_ecommerce.eshop.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +57,7 @@ public class ProductService {
         }
         existingProduct.setTitle(product.getTitle());
         existingProduct.setDescription(product.getDescription());
-        existingProduct.setPrice(product.getPrice());
+        //existingProduct.setPrice(product.getPrice());
         existingProduct.setDiscount(product.getDiscount());
         existingProduct.setStock(product.getStock());
         existingProduct.setBrand(product.getBrand());
@@ -61,5 +65,12 @@ public class ProductService {
         existingProduct.setUpdated_at(LocalDateTime.now());
 
         ProductRepository.save(existingProduct);
+    }
+
+    public List<Product> getBestSellers(int numOfProducts){
+        Sort sortBySalesDesc = Sort.by(Sort.Direction.DESC, "sales");
+        Pageable pageable = PageRequest.of(0, numOfProducts, sortBySalesDesc);
+
+        return ProductRepository.findAll(pageable).getContent();
     }
 }
