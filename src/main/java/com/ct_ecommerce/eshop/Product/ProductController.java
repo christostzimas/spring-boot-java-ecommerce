@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")   //route prefix
+@RequestMapping("/api/products")   //route prefix
 public class ProductController {
 
     private final ProductService productService;
@@ -17,8 +17,9 @@ public class ProductController {
     }
 
     //list all products
-    @GetMapping(path = "/")
+    @GetMapping
     public List<Product> getProducts(){
+        //need to get specific from categories??
         return productService.getProducts();
     }
 

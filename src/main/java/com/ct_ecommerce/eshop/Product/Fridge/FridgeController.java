@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products/fridge")   //route prefix
+@RequestMapping("/api/products/fridge")   //route prefix
 public class FridgeController {
     private final FridgeService fridgeService;
 
@@ -18,7 +18,9 @@ public class FridgeController {
     //get all products from fridge category
     @GetMapping
     public List<Fridge> getProducts(){
-        return fridgeService.getProducts();
+        Fridge discountOfficer = new Fridge();
+
+        return (List<Fridge>) discountOfficer.calculateDiscounts(fridgeService.getProducts());
     }
 
     //create new fridge

@@ -26,15 +26,12 @@ public class Fridge extends Product {
     private char energyClass;
     @Column(name = "noise_energy_class")
     private char noiseEnergyClass;
-    @Column(name = "price", nullable = false)
-    private double price;
     @Column(name = "discounted_price")
     private double discountedPrice;
 
 
     public Fridge(String title, String description, double price, double discount, int stock, String brand, int ltCapacity, String coolingType, String dimensions, int annualEnergyConsumption, char energyClass, char noiseEnergyClass) {
-        super(title, description, discount, stock, brand, "Fridge");
-        this.price = price;
+        super(title, description, discount, price, stock, brand, "Fridge");
         this.ltCapacity = ltCapacity;
         this.coolingType = coolingType;
         this.dimensions = dimensions;
@@ -43,8 +40,7 @@ public class Fridge extends Product {
         this.noiseEnergyClass = noiseEnergyClass;
     }
 
-    public Fridge(int price, int ltCapacity, String coolingType, String dimensions, int annualEnergyConsumption, char energyClass, char noiseEnergyClass) {
-        this.price = price;
+    public Fridge(int ltCapacity, String coolingType, String dimensions, int annualEnergyConsumption, char energyClass, char noiseEnergyClass) {
         this.ltCapacity = ltCapacity;
         this.coolingType = coolingType;
         this.dimensions = dimensions;
@@ -111,15 +107,6 @@ public class Fridge extends Product {
 
     public void setNoiseEnergyClass(char noiseEnergyClass) {
         this.noiseEnergyClass = noiseEnergyClass;
-    }
-
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     public double getDiscountedPrice() {

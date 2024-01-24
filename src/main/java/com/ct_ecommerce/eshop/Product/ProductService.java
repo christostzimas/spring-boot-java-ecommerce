@@ -23,10 +23,6 @@ public class ProductService {
 
     public List<Product> getProducts(){
         return ProductRepository.findAll();
-        /*return List.of(
-                new Product("test 1", "test test test", 10.5, 0.0, 15, "brand 1", "category 1"),
-                new Product("test 2", "test test test", 10.5, 0.0, 15, "brand 2", "category 2")
-        );*/
     }
 
     public void addNewProduct(Product product) {
@@ -35,6 +31,7 @@ public class ProductService {
             throw new IllegalStateException("Product already exists");
             //check also for category
         }
+        product.setSales(0);
         product.setUpdated_at(LocalDateTime.now());
         product.setCreated_at(LocalDateTime.now());
         ProductRepository.save(product);
@@ -57,7 +54,7 @@ public class ProductService {
         }
         existingProduct.setTitle(product.getTitle());
         existingProduct.setDescription(product.getDescription());
-        //existingProduct.setPrice(product.getPrice());
+        existingProduct.setPrice(product.getPrice());
         existingProduct.setDiscount(product.getDiscount());
         existingProduct.setStock(product.getStock());
         existingProduct.setBrand(product.getBrand());

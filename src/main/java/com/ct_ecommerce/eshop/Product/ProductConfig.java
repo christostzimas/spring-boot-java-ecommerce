@@ -18,15 +18,16 @@ public class ProductConfig {
                     //10.5,
                     0.0,
                     15,
+                    25,
                     "brand 1",
                     "category 1"
             );
             Product test2 = new Product(
                     "test 2",
                     "test test test",
-                    //10.5,
                     0.0,
-                    15,
+                    105,
+                    60,
                     "brand 2",
                     "category 2"
             );

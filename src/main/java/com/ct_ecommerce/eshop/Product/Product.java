@@ -2,6 +2,7 @@ package com.ct_ecommerce.eshop.Product;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Products")
@@ -13,7 +14,6 @@ public class Product {
     private String title;
     @Column(name = "description", nullable = false)
     private String description;
-    //private double price;
     private double discount;
     @Column(name = "stock", nullable = false)
     private int stock;
@@ -22,14 +22,21 @@ public class Product {
     private String brand;
     @Column(name = "category", nullable = false)
     private String category;
+    @Column(name = "price", nullable = false)
+    private double price;
+    //the field finalDiscountedPrice is used to send the discounted price
+    //along with the original to be used in the front end app
+    @Transient //this annotation prevents this field from being a column in db
+    private double finalDiscountedPrice;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 
-    public Product(int idProduct, String titleProduct, String descriptionProduct, double discountPrice, int stockProduct, String brandProduct, String categoryProduct) {
+    public Product(int idProduct, String titleProduct, String descriptionProduct, double discountPrice, double price, int stockProduct, String brandProduct, String categoryProduct) {
         this.id = idProduct;
         this.title = titleProduct;
         this.description = descriptionProduct;
         this.discount = discountPrice;
+        this.price = price;
         this.stock = stockProduct;
         this.sales = 0;
         this.brand = brandProduct;
@@ -38,10 +45,11 @@ public class Product {
         this.created_at = LocalDateTime.now();
     }
 
-    public Product(String titleProduct, String descriptionProduct, double discountPrice, int stockProduct, String brandProduct, String categoryProduct) {
+    public Product(String titleProduct, String descriptionProduct, double discountPrice, double price, int stockProduct, String brandProduct, String categoryProduct) {
         this.title = titleProduct;
         this.description = descriptionProduct;
         this.discount = discountPrice;
+        this.price = price;
         this.stock = stockProduct;
         this.sales = 0;
         this.brand = brandProduct;
@@ -54,11 +62,22 @@ public class Product {
     }
 
     //calculate discounts
-    public double discountPercentage(double price, double discount){
-        if(discount == 0){
-            return price;
+    public double discountPercentage(){
+        if(this.discount == 0){
+            return this.price;
         }
-        return price - (price * discount/100);
+        return this.price - (this.price * (this.discount/100));
+    }
+
+    //set discounted prices
+    public List<? extends Product> calculateDiscounts(List<? extends Product> products){
+        for (Product product : products){
+            if(product.discount > 0){
+                product.setFinalDiscountedPrice(product.discountPercentage());
+            }
+        }
+
+        return products;
     }
 
     public int getId() {
@@ -141,12 +160,29 @@ public class Product {
         this.updated_at = updated_at;
     }
 
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getFinalDiscountedPrice() {
+        return finalDiscountedPrice;
+    }
+
+    public void setFinalDiscountedPrice(double finalDiscountedPrice) {
+        this.finalDiscountedPrice = finalDiscountedPrice;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
+                ", price='" + price + '\'' +
                 ", discount=" + discount +
                 ", stock=" + stock +
                 ", sales=" + sales +
