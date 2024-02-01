@@ -1,6 +1,7 @@
 package com.ct_ecommerce.eshop.AppUsers;
 
 import com.ct_ecommerce.eshop.AppUsers.Address.Address;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class AppUser {
     private int id;
     @Column(name="username", nullable = false, unique = true)
     private String username;
+    @JsonIgnore
     @Column(name="password", nullable = false, length = 1000)
     private String password;
     @Column(name = "email", nullable = false, unique = true, length = 320)
@@ -30,10 +32,13 @@ public class AppUser {
     private String firstName;
     @Column(name = "last_name",nullable = false)
     private String lastName;
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
+    @JsonIgnore
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
+    @JsonIgnore
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 

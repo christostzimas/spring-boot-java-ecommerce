@@ -3,6 +3,7 @@ package com.ct_ecommerce.eshop.AppUsers;
 import com.ct_ecommerce.eshop.ResponseServices.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -63,5 +64,10 @@ public class AppUserController {
             response.setJwt(jwt);
             return ResponseService.SuccessfullLogin(response);
         }
+    }
+
+    @GetMapping(path = "/profile")
+    public AppUser getLoggedUserInfo(@AuthenticationPrincipal AppUser user){
+        return user;
     }
 }
