@@ -41,13 +41,11 @@ public class MobilePhonesService {
 
             return mobilePhones;
         } catch (IllegalStateException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("No mobile phones found --getAll");
         } catch(Exception ex){
             //general error
-            System.out.println(ex.getMessage());
+            throw new RuntimeException("Error getting all the mobile phones", ex);
         }
-        //return proper response
-        return null;
     }
 
     /**
@@ -70,11 +68,9 @@ public class MobilePhonesService {
             /** save mobile phone and variants */
             MobilePhonesRepository.save(phone);
         } catch (IllegalStateException ex) {
-            //catch threw error
-            System.out.println(ex.getMessage());
+            throw new IllegalArgumentException("Mobile phone already exists");
         }catch (Exception ex){
-            //general error
-            System.out.println(ex.getMessage());
+            throw new RuntimeException("Error storing new mobile phone --exists", ex);
         }
     }
 
@@ -115,11 +111,9 @@ public class MobilePhonesService {
             /** save mobile phone */
             MobilePhonesRepository.save(existingPhone);
         } catch (IllegalStateException ex) {
-            //catch threw error
-            System.out.println(ex.getMessage());
+            throw new IllegalArgumentException("Mobile phone does not exist --update");
         } catch (Exception ex){
-            //general error
-            System.out.println(ex.getMessage());
+            throw new RuntimeException("Error updating mobile phone by id..", ex);
         }
     }
 
@@ -138,11 +132,9 @@ public class MobilePhonesService {
             }
             MobilePhonesRepository.deleteById(id);
         } catch (IllegalStateException ex) {
-            //catch threw error
-            System.out.println(ex.getMessage());
+            throw new IllegalArgumentException("Mobile phone does not exist -- for delete");
         } catch (Exception ex){
-            //general error
-            System.out.println(ex.getMessage());
+            throw new RuntimeException("Error deleting mobile phone by id..", ex);
         }
     }
 }

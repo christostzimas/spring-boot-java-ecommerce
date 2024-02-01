@@ -52,13 +52,9 @@ public class AppUserService {
             /** Save new user */
             AppUserRepository.save(user);
         }catch(IllegalStateException ex){
-            //catch threw error
-            System.out.println(ex.getMessage());
-            System.out.println("IllegalStateException");
+            throw new IllegalArgumentException("User already exists --update");
         }catch(Exception ex){
-            System.out.println("generic exception");
-            //general error
-            System.out.println(ex.getMessage());
+            throw new RuntimeException("Error creating the user", ex);
         }
     }
 

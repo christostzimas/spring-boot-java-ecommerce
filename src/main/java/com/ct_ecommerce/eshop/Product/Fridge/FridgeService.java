@@ -37,16 +37,13 @@ public class FridgeService {
             if (products.isEmpty()) {
                 throw new IllegalStateException("No products found");
             }
-
             return products;
         } catch (IllegalStateException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("No fridge found");
         } catch(Exception ex){
             //general error
-            System.out.println(ex.getMessage());
+            throw new RuntimeException("Error getting all the fridges", ex);
         }
-        //return proper response
-        return null;
     }
 
     /**
@@ -71,11 +68,10 @@ public class FridgeService {
             /** save fridge */
             FridgeRepository.save(fridge);
         }catch(IllegalStateException ex){
-            //catch threw error
-            System.out.println(ex.getMessage());
+            throw new IllegalArgumentException("Fridge already exists");
         }catch(Exception ex){
             //general error
-            System.out.println(ex.getMessage());
+            throw new RuntimeException("Error storing new fridges", ex);
         }
     }
 
@@ -109,11 +105,10 @@ public class FridgeService {
             /** update fridge */
             FridgeRepository.save(existingFridge);
         }catch(IllegalStateException ex){
-            //catch threw error
-            System.out.println(ex.getMessage());
+            throw new IllegalArgumentException("Fridge does not exist");
         }catch(Exception ex){
             //general error
-            System.out.println(ex.getMessage());
+            throw new RuntimeException("Error updating fridge by id..", ex);
         }
     }
 
@@ -131,10 +126,10 @@ public class FridgeService {
             FridgeRepository.deleteById(id);
         }catch (IllegalStateException ex){
             //catch threw error
-            System.out.println(ex.getMessage());
+            throw new IllegalArgumentException("Fridge does not exist -- for delete");
         }catch (Exception ex){
             //general error
-            System.out.println(ex.getMessage());
+            throw new RuntimeException("Error deleting fridge by id..", ex);
         }
     }
 }
