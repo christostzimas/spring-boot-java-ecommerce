@@ -4,6 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Class representing products - super class of fridge and MobilePhone
+ * @Id ** primary key
+ * @Entity ** database entity
+ * @Table ** Table name in db
+ */
 @Entity
 @Table(name = "Products")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -24,13 +30,17 @@ public class Product {
     private String category;
     @Column(name = "price", nullable = false)
     private double price;
-    //the field finalDiscountedPrice is used to send the discounted price
-    //along with the original to be used in the front end app
-    @Transient //this annotation prevents this field from being a column in db
+    /**
+     * finalDiscountedPrice is used to send the discounted price
+     * along with the original to be used in the front end app
+     * @Transient ** annotation that prevents this variable from being a column in db
+     */
+    @Transient
     private double finalDiscountedPrice;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 
+    /** constructor all fields */
     public Product(int idProduct, String titleProduct, String descriptionProduct, double discountPrice, double price, int stockProduct, String brandProduct, String categoryProduct) {
         this.id = idProduct;
         this.title = titleProduct;
@@ -45,6 +55,7 @@ public class Product {
         this.created_at = LocalDateTime.now();
     }
 
+    /** constructor without id */
     public Product(String titleProduct, String descriptionProduct, double discountPrice, double price, int stockProduct, String brandProduct, String categoryProduct) {
         this.title = titleProduct;
         this.description = descriptionProduct;
@@ -58,10 +69,15 @@ public class Product {
         this.created_at = LocalDateTime.now();
     }
 
+    /** Empty constructor */
     public Product() {
     }
 
-    //calculate discounts
+    /**
+     * Calculates discounted price for one product
+     * uses discount, price
+     * @return discounted price
+     */
     public double discountPercentage(){
         if(this.discount == 0){
             return this.price;
@@ -69,6 +85,10 @@ public class Product {
         return this.price - (this.price * (this.discount/100));
     }
 
+    /**
+     * Updates list containing Products objects or any subclass
+     * @return the updated list including discounted price
+     */
     //set discounted prices
     public List<? extends Product> calculateDiscounts(List<? extends Product> products){
         for (Product product : products){
@@ -80,6 +100,7 @@ public class Product {
         return products;
     }
 
+    /** Getters & setters */
     public int getId() {
         return id;
     }
@@ -176,6 +197,7 @@ public class Product {
         this.finalDiscountedPrice = finalDiscountedPrice;
     }
 
+    /** toString */
     @Override
     public String toString() {
         return "Product{" +

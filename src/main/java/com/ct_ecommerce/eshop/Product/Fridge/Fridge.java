@@ -3,15 +3,15 @@ package com.ct_ecommerce.eshop.Product.Fridge;
 import com.ct_ecommerce.eshop.Product.Product;
 import jakarta.persistence.*;
 
-
+/**
+ * Class representing users of the app
+ * @Id ** primary key
+ * @Entity ** database entity
+ * @Table ** Table name in db
+ */
 @Entity
 @Table(name = "fridge_products")
 public class Fridge extends Product {
-
-    //
-    // General info
-    //
-    // fields are nullable by default
 
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) int id;
     @Column(name = "lt_capacity", nullable = false)
@@ -30,6 +30,7 @@ public class Fridge extends Product {
     private double discountedPrice;
 
 
+    /** constructor with super class variables */
     public Fridge(String title, String description, double price, double discount, int stock, String brand, int ltCapacity, String coolingType, String dimensions, int annualEnergyConsumption, char energyClass, char noiseEnergyClass) {
         super(title, description, discount, price, stock, brand, "Fridge");
         this.ltCapacity = ltCapacity;
@@ -40,6 +41,7 @@ public class Fridge extends Product {
         this.noiseEnergyClass = noiseEnergyClass;
     }
 
+    /** constructor with all fields for current class */
     public Fridge(int ltCapacity, String coolingType, String dimensions, int annualEnergyConsumption, char energyClass, char noiseEnergyClass) {
         this.ltCapacity = ltCapacity;
         this.coolingType = coolingType;
@@ -48,9 +50,10 @@ public class Fridge extends Product {
         this.energyClass = energyClass;
         this.noiseEnergyClass = noiseEnergyClass;
     }
-
+    /** Empty constructor */
     public Fridge(){}
 
+    /** Getters & setters */
     //@Override
     public int getId() {
         return id;
@@ -117,6 +120,7 @@ public class Fridge extends Product {
         this.discountedPrice = discountedPrice;
     }
 
+    /** toString */
     @Override
     public String toString() {
         return "Fridge{" +

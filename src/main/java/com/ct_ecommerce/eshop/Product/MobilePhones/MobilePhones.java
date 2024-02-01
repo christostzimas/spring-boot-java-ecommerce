@@ -3,6 +3,12 @@ package com.ct_ecommerce.eshop.Product.MobilePhones;
 import com.ct_ecommerce.eshop.Product.Product;
 import jakarta.persistence.*;
 
+/**
+ * Class representing MobilePhones that extent Product class
+ * @Id ** primary key
+ * @Entity ** database entity
+ * @Table ** Table name in db
+ */
 @Entity
 @Table(name = "mobile_phones")
 public class MobilePhones extends Product {
@@ -30,6 +36,7 @@ public class MobilePhones extends Product {
     @Column(name = "battery_size", nullable = false)
     private int batterySize;
 
+    /** constructor all fields with super class fields */
     public MobilePhones(String titleProduct, String descriptionProduct, double discountPrice, double price, int stockProduct, String brandProduct, String categoryProduct, int id, String operatingSystem, String model, String boxContents, String processor, double processorSpeed, int ramSize, double screenSize, String screenResolution, int screenRefreshRate, int batterySize) {
         super(titleProduct, descriptionProduct, discountPrice, price, stockProduct, brandProduct, categoryProduct);
         this.operatingSystem = operatingSystem;
@@ -44,6 +51,7 @@ public class MobilePhones extends Product {
         this.batterySize = batterySize;
     }
 
+    /** constructor with all fields of current class */
     public MobilePhones(String operatingSystem, String model, String boxContents, String processor, double processorSpeed, int ramSize, double screenSize, String screenResolution, int screenRefreshRate, int batterySize) {
         this.operatingSystem = operatingSystem;
         this.model = model;
@@ -57,8 +65,10 @@ public class MobilePhones extends Product {
         this.batterySize = batterySize;
     }
 
+    /** Empty constructor */
     public MobilePhones() {}
 
+    /** Getters & setters */
     @Override
     public int getId() {
         return id;
@@ -149,6 +159,7 @@ public class MobilePhones extends Product {
         this.batterySize = batterySize;
     }
 
+    /** toString */
     @Override
     public String toString() {
         return "MobilePhones{" +
