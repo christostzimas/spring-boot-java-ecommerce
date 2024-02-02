@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -132,6 +133,43 @@ public class ProductService {
             return ProductRepository.findAll(pageable).getContent();
         }catch (Exception ex) {
             throw new RuntimeException("Error getting best-selling products", ex);
+        }
+    }
+
+    /**
+     * Update stock of product with id
+     * @param productId ** id of product
+     * @param quantityToSubtract ** quantity to subtract from stock
+     * @Errors RuntimeException
+     */
+    public void updateProductStock(int productId, int quantityToSubtract){
+        try{
+            Optional<Product> optionalProduct = ProductRepository.findById(productId);
+            if (optionalProduct.isPresent()) {
+                Product product = optionalProduct.get();
+                if(product.getStock() < quantityToSubtract){
+                    throw new RuntimeException("Product stock is not enough for this purchase");
+                }
+                product.setStock(product.getStock() - quantityToSubtract);
+                ProductRepository.save(product);
+            }
+        } catch (Exception ex){
+            throw new RuntimeException("error updating product quantity", ex);
+        }
+    }
+
+    /**
+     * Update stock of multiple products
+     * @param updatedValuesWithIds ** HashMap with productId as key and quantity to subtract as value
+     * @Errors RuntimeException
+     */
+    public void updateProductStockFromList(Map<Integer, Integer> updatedValuesWithIds){
+        try{
+            for (Map.Entry<Integer, Integer> entry : updatedValuesWithIds.entrySet()) {
+                this.updateProductStock(entry.getKey(), entry.getValue());
+            }
+        } catch (Exception ex){
+            throw new RuntimeException("error updating product quantity", ex);
         }
     }
 }

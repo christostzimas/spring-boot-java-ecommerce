@@ -66,6 +66,11 @@ public class AppUserController {
         }
     }
 
+    /**
+     * Returns the profile of the currently logged-in user.
+     * @param user The authentication principal object.
+     * @return The user profile.
+     */
     @GetMapping(path = "/profile")
     public AppUser getLoggedUserInfo(@AuthenticationPrincipal AppUser user){
         return user;

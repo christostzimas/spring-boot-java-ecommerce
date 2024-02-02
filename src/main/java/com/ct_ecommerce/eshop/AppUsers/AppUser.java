@@ -13,6 +13,7 @@ import java.util.List;
  * @Id ** primary key
  * @Entity ** database entity
  * @Table ** Table name in db
+ * @JsonIgnore ** excludes fields with this annotation from responses
  */
 @Entity
 @Table(name = "application_users")

@@ -14,7 +14,7 @@ import java.util.List;
  * @RequestMapping("/api/products/fridge") ** route prefix
  */
 @RestController
-@RequestMapping("/api/products/fridge")   //route prefix
+@RequestMapping("/api/products/fridge")
 public class FridgeController {
     private final FridgeService fridgeService;
     private final ResponseService ResponseService;
