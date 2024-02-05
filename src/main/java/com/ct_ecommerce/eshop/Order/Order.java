@@ -33,6 +33,10 @@ public class Order {
     /** quantities ordered. */
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderQuantities> quantities = new ArrayList<>();
+    @Column(name="total_price")
+    private  Double totalOrderPrice;
+    @Column(name = "order_number")
+    private Long orderNumber;
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -70,6 +74,22 @@ public class Order {
         this.quantities = quantities;
     }
 
+    public Double getTotalOrderPrice() {
+        return totalOrderPrice;
+    }
+
+    public void setTotalOrderPrice(Double totalOrderPrice) {
+        this.totalOrderPrice = totalOrderPrice;
+    }
+
+    public Long getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(Long orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -90,19 +110,23 @@ public class Order {
     public Order() {
     }
     /** constructor */
-    public Order(int id, AppUser user, Address address, List<OrderQuantities> quantities) {
+    public Order(int id, AppUser user, Address address, List<OrderQuantities> quantities, double totalOrderPrice, Long orderNumber) {
         this.id = id;
         this.user = user;
         this.address = address;
         this.quantities = quantities;
+        this.totalOrderPrice = totalOrderPrice;
+        this.orderNumber = orderNumber;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
     /** constructor without id */
-    public Order(AppUser user, Address address, List<OrderQuantities> quantities) {
+    public Order(AppUser user, Address address, List<OrderQuantities> quantities, double totalOrderPrice, Long orderNumber) {
         this.user = user;
         this.address = address;
         this.quantities = quantities;
+        this.totalOrderPrice = totalOrderPrice;
+        this.orderNumber = orderNumber;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -110,10 +134,10 @@ public class Order {
     @Override
     public String toString() {
         return "Order{" +
-                "id=" + id +
-                ", user=" + user +
-                ", address=" + address +
-                ", quantities=" + quantities +
+                "id: " + id +
+                ", user: " + user +
+                ", address: " + address +
+                ", quantities: " + quantities +
                 '}';
     }
 }

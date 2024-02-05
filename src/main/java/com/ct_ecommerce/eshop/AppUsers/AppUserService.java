@@ -75,4 +75,23 @@ public class AppUserService {
         }
         return null;
     }
+
+    /**
+     * Method to check if an authenticated user has permission to a user ID.
+     * @param user the authenticated user.
+     * @param id the user ID.
+     * @return true if they have permission, false otherwise.
+     */
+    public boolean userHasPermissionToUser(AppUser user, Integer id) {
+        return user.getId() == id;
+    }
+
+    /**
+     * Method to check if an authenticated user has permission to a user ID.
+     * @param user the authenticated user.
+     * @return true if they have permission, false otherwise.
+     */
+    public boolean isUserAdmin(AppUser user) {
+        return user.getId() == 1 && user.getUsername() == "test-user-1";
+    }
 }

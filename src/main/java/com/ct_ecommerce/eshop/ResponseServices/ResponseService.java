@@ -22,6 +22,10 @@ public class ResponseService {
         return ResponseEntity.ok().build();
     }
 
+    public ResponseEntity SuccessResponseWithMsg(String msg){
+        return ResponseEntity.ok().body(msg);
+    }
+
     public ResponseEntity SuccessResponse(List list){
         return ResponseEntity.ok().body(list);
     }

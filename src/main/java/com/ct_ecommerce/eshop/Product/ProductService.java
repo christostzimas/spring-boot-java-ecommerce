@@ -1,5 +1,6 @@
 package com.ct_ecommerce.eshop.Product;
 
+import com.ct_ecommerce.eshop.dto.UnavailableProductsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,9 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service layer for products
@@ -171,5 +170,36 @@ public class ProductService {
         } catch (Exception ex){
             throw new RuntimeException("error updating product quantity", ex);
         }
+    }
+
+    /**
+     * Return a List of type Product with all the ordered products
+     * @param *Set<Integer> ids * collection with unique integers (ids of products)
+     * @return list of type Product
+     * @Errors RuntimeException
+     */
+    public List<Product> getAllOrderedProducts(Set<Integer> ids){
+        try{
+            return ProductRepository.findAllById(ids);
+        } catch (Exception ex){
+            throw new RuntimeException("error getting specific products");
+        }
+    }
+
+    /**
+     * Return a List of type UnavailableProductsDTO with all the ordered products with lower stock
+     * @param  *List<Product> products list of ordered products
+     * @param  *Map<Integer, Integer> productQuantities Hashmap of ids as keys and quantity as value
+     * @return list of type UnavailableProductsDTO -- if list not empty some products don't have enough stock
+     */
+    public List<UnavailableProductsDTO> checkProductsAvaliability(List<Product> products, Map<Integer, Integer> productQuantities){
+        List<UnavailableProductsDTO> unavailableProductsList = new ArrayList<>();
+        for(Product product: products){
+            if(product.getStock() < productQuantities.get(product.getId())){
+                unavailableProductsList.add(new UnavailableProductsDTO(product.getId(), product.getTitle(), product.getStock()));
+            }
+        }
+
+        return unavailableProductsList;
     }
 }
