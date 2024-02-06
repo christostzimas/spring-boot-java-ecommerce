@@ -69,6 +69,28 @@ public class ProductService {
     }
 
     /**
+     * Get existing product by id
+     * @param id The product id.
+     * @Errors ** IllegalStateException if the product does not exist
+     */
+    public Product getProductByID(int id) {
+        try {
+            /** Check if product exists */
+            boolean exists = ProductRepository.existsById(id);
+            if (!exists) {
+                throw new IllegalStateException("Product does not exist");
+            }
+
+            return ProductRepository.getReferenceById(id);
+        }catch (IllegalStateException e) {
+            throw new IllegalArgumentException("Product  does not exist --delete");
+        } catch(Exception ex){
+            //general error
+            throw new RuntimeException("Error fetching product", ex);
+        }
+    }
+
+    /**
      * Delete existing product by id
      * @param id ** id of saved fridge
      * @Errors ** IllegalStateException if the product does not exist
