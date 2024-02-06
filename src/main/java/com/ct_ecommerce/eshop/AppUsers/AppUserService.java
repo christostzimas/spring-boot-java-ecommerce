@@ -48,7 +48,6 @@ public class AppUserService {
             }
             /** encrypt password */
             user.setPassword(EncoderService.encryptPassword(user.getPassword()));
-
             /** Save new user */
             AppUserRepository.save(user);
         }catch(IllegalStateException ex){
@@ -92,6 +91,6 @@ public class AppUserService {
      * @return true if they have permission, false otherwise.
      */
     public boolean isUserAdmin(AppUser user) {
-        return user.getId() == 1 && user.getUsername() == "test-user-1";
+        return user.getId() == 1 && user.getUsername().equals("test-user-1");
     }
 }

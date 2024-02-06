@@ -12,7 +12,7 @@ public class ProductConfig {
     CommandLineRunner CommandLineRunner(ProductRepository repository){
         return args -> {
             //repository.deleteAll();
-            Product test1 = new Product(
+            /** Product test1 = new Product(
                     "test 1",
                     "test test test",
                     //10.5,
@@ -35,7 +35,7 @@ public class ProductConfig {
             test1.setSales(10);
             test2.setSales(1);
 
-            repository.saveAll(List.of(test1, test2));
+            repository.saveAll(List.of(test1, test2)); */
         };
     }
 }

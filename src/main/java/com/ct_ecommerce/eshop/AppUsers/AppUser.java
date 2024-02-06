@@ -24,7 +24,6 @@ public class AppUser {
     private int id;
     @Column(name="username", nullable = false, unique = true)
     private String username;
-    @JsonIgnore
     @Column(name="password", nullable = false, length = 1000)
     private String password;
     @Column(name = "email", nullable = false, unique = true, length = 320)
@@ -138,5 +137,17 @@ public class AppUser {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    /** toString */
+    @Override
+    public String toString() {
+        return "AppUser{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
     }
 }

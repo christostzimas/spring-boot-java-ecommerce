@@ -6,7 +6,6 @@ import com.ct_ecommerce.eshop.Product.Product;
 import com.ct_ecommerce.eshop.Product.ProductService;
 import com.ct_ecommerce.eshop.ResponseServices.ResponseService;
 import com.ct_ecommerce.eshop.dto.UnavailableProductsDTO;
-import com.mysql.cj.protocol.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +17,8 @@ import java.util.*;
  * Controller for all requests related to orders
  * @Variable OrderService ** service layer for orders.
  * @Variable ResponseService ** service used to pass http responses to client
- * @RequestMapping("/api/products/fridge") ** route prefix
+ * @Variable ProductService ** service layer for Products
+ * @RequestMapping("/api/products/orders") ** route prefix
  */
 @RestController
 @RequestMapping("/api/orders")

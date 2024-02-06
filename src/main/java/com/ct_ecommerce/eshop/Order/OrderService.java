@@ -44,7 +44,22 @@ public class OrderService {
     }
 
     /**
+     * Get order by order_number
+     * @Param orderNo ** The order number.
+     * @Errors RuntimeException
+     */
+    public Order getOrderByOrderNumber(Long orderNo){
+        try{
+            return OrderRepository.getReferenceByOrderNumber(orderNo);
+
+        } catch(Exception ex){
+            throw new RuntimeException("Error fetching order", ex);
+        }
+    }
+
+    /**
      * Saves new order
+     * @Param order ** The order object
      * @Errors RuntimeException
      */
     @Transactional
@@ -54,6 +69,19 @@ public class OrderService {
 
         } catch(Exception ex){
             throw new RuntimeException("Error storing order", ex);
+        }
+    }
+
+    /**
+     * Delete order by id
+     * @Param id ** The order id
+     * @Errors RuntimeException
+     */
+    public void deleteByID(int id){
+        try{
+            OrderRepository.deleteById(id);
+        } catch(Exception ex){
+            throw new RuntimeException("Error fetching order", ex);
         }
     }
 }
