@@ -86,7 +86,7 @@ public class ProductService {
             throw new IllegalArgumentException("Product  does not exist --delete");
         } catch(Exception ex){
             //general error
-            throw new RuntimeException("Error fetching product", ex);
+            throw new RuntimeException("Error fetching product");
         }
     }
 

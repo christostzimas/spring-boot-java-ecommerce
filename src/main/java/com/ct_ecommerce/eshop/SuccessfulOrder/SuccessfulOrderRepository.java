@@ -14,4 +14,7 @@ public interface SuccessfulOrderRepository extends JpaRepository<SuccessfulOrder
     /** Get successful order using the user who owns it */
     @Query("SELECT order FROM SuccessfulOrder order WHERE order.user=:user")
     List<SuccessfulOrder> findOrdersByUser(@Param("user") AppUser user);
+
+    @Query("SELECT order FROM SuccessfulOrder order WHERE order.user=:user")
+    List<SuccessfulOrder> findByUser(@Param("user") AppUser user);
 }

@@ -4,6 +4,7 @@ import com.ct_ecommerce.eshop.AppUsers.AppUser;
 import com.ct_ecommerce.eshop.Order.Order;
 import com.ct_ecommerce.eshop.Order.OrderService;
 import com.ct_ecommerce.eshop.OrderQuantities.OrderQuantities;
+import com.ct_ecommerce.eshop.Product.Product;
 import com.ct_ecommerce.eshop.SuccessfulOrdersQuantities;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,6 @@ public class SuccessfulOrderService {
 
     /**
      * Get all successful orders of a specific user
-     * @Autowired ** config to be autowired by Spring's dependency injection facilities.
      * @param user ** user object
      */
     public List<SuccessfulOrder> getAll(AppUser user) {
@@ -57,7 +57,7 @@ public class SuccessfulOrderService {
     }
 
     /**
-     * Get all successful orders of a specific user
+     * Mark order as successful
      * @Transactional **
      * @param orderNo ** order_number of pending order
      */
@@ -105,5 +105,25 @@ public class SuccessfulOrderService {
             System.out.println(ex.getMessage());
             throw new RuntimeException("Error marking order as successful", ex);
         }
+    }
+
+    /**
+     * Check if user has bought a product
+     * @param productId The id of the product
+     * @param user The user of the order
+     */
+    public boolean hasUserPurchasedProduct(AppUser user, int productId) {
+        /** Get all user orders */
+        List<SuccessfulOrder> userOrders = successfulOrderRepository.findByUser(user);
+
+        /** loop quantities of orders  and check if user has bought the item*/
+        for (SuccessfulOrder order : userOrders) {
+            for (SuccessfulOrdersQuantities quantity : order.getQuantities()) {
+                if (quantity.getProduct().getId() == productId) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
