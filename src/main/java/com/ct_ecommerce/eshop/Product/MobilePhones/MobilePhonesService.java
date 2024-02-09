@@ -30,22 +30,18 @@ public class MobilePhonesService {
     /**
      * Get all products in mobile phones category
      * @Errors ** IllegalStateException if no products found
+     * @returns List with all products in fridge category.
      */
     public List<MobilePhones> getAll(){
-        try {
-            List<MobilePhones> mobilePhones = MobilePhonesRepository.findAll();
 
-            if (mobilePhones.isEmpty()) {
-                throw new IllegalStateException("No products (mobile phones) found");
-            }
+        List<MobilePhones> mobilePhones = MobilePhonesRepository.findAll();
 
-            return mobilePhones;
-        } catch (IllegalStateException e) {
-            throw new IllegalArgumentException("No mobile phones found --getAll");
-        } catch(Exception ex){
-            //general error
-            throw new RuntimeException("Error getting all the mobile phones", ex);
+        if (mobilePhones.isEmpty()) {
+            throw new IllegalStateException();
         }
+
+        return mobilePhones;
+
     }
 
     /**
@@ -55,23 +51,18 @@ public class MobilePhonesService {
      */
     @Transactional
     public void store(MobilePhones phone){
-        try{
-            Optional<MobilePhones> phoneExists = MobilePhonesRepository.findPhoneByModel(phone.getModel());
+        Optional<MobilePhones> phoneExists = MobilePhonesRepository.findPhoneByModel(phone.getModel());
 
-            if(phoneExists.isPresent()){
-                throw new IllegalStateException("Phone already exists");
-            }
-            phone.setCategory("Mobile Phone");
-            phone.setCreated_at(LocalDateTime.now());
-            phone.setUpdated_at(LocalDateTime.now());
-
-            /** save mobile phone and variants */
-            MobilePhonesRepository.save(phone);
-        } catch (IllegalStateException ex) {
-            throw new IllegalArgumentException("Mobile phone already exists");
-        }catch (Exception ex){
-            throw new RuntimeException("Error storing new mobile phone --exists", ex);
+        if(phoneExists.isPresent()){
+            throw new IllegalStateException();
         }
+
+        phone.setCategory("Mobile Phone");
+        phone.setCreated_at(LocalDateTime.now());
+        phone.setUpdated_at(LocalDateTime.now());
+
+        /** save mobile phone and variants */
+        MobilePhonesRepository.save(phone);
     }
 
     /**
@@ -81,40 +72,38 @@ public class MobilePhonesService {
      * @Errors ** IllegalStateException if product does not exist + general
      */
     public void update(int id, MobilePhones phone){
-        try{
-            System.out.println("service update...");
-            /** check if phone exists */
-            Optional<MobilePhones> phoneExists = MobilePhonesRepository.findById(id);
-            if (phoneExists.isEmpty()) {
-                throw new IllegalStateException("Mobile phone does not exist");
-            }
-            /** get existing phone */
-            MobilePhones existingPhone = phoneExists.get();
-            /** set new values */
-            existingPhone.setTitle(phone.getTitle());
-            existingPhone.setDescription(phone.getDescription());
-            existingPhone.setDiscount(phone.getDiscount());
-            existingPhone.setStock(phone.getStock());
-            existingPhone.setBrand(phone.getBrand());
-            existingPhone.setOperatingSystem(phone.getOperatingSystem());
-            existingPhone.setModel(phone.getModel());
-            existingPhone.setBoxContents(phone.getBoxContents());
-            existingPhone.setProcessor(phone.getProcessor());
-            existingPhone.setProcessorSpeed(phone.getProcessorSpeed());
-            existingPhone.setRamSize(phone.getRamSize());
-            existingPhone.setScreenSize(phone.getScreenSize());
-            existingPhone.setScreenResolution(phone.getScreenResolution());
-            existingPhone.setScreenRefreshRate(phone.getScreenRefreshRate());
-            existingPhone.setBatterySize(phone.getBatterySize());
-            /** set update timestamps */
-            existingPhone.setUpdated_at(LocalDateTime.now());
-            /** save mobile phone */
-            MobilePhonesRepository.save(existingPhone);
-        } catch (IllegalStateException ex) {
-            throw new IllegalArgumentException("Mobile phone does not exist --update");
-        } catch (Exception ex){
-            throw new RuntimeException("Error updating mobile phone by id..", ex);
+        /** check if phone exists */
+        Optional<MobilePhones> phoneExists = MobilePhonesRepository.findById(id);
+
+        if (phoneExists.isEmpty()) {
+            throw new IllegalStateException();
         }
+
+        /** get existing phone */
+        MobilePhones existingPhone = phoneExists.get();
+
+        /** set new values */
+        existingPhone.setTitle(phone.getTitle());
+        existingPhone.setDescription(phone.getDescription());
+        existingPhone.setDiscount(phone.getDiscount());
+        existingPhone.setStock(phone.getStock());
+        existingPhone.setBrand(phone.getBrand());
+        existingPhone.setOperatingSystem(phone.getOperatingSystem());
+        existingPhone.setModel(phone.getModel());
+        existingPhone.setBoxContents(phone.getBoxContents());
+        existingPhone.setProcessor(phone.getProcessor());
+        existingPhone.setProcessorSpeed(phone.getProcessorSpeed());
+        existingPhone.setRamSize(phone.getRamSize());
+        existingPhone.setScreenSize(phone.getScreenSize());
+        existingPhone.setScreenResolution(phone.getScreenResolution());
+        existingPhone.setScreenRefreshRate(phone.getScreenRefreshRate());
+        existingPhone.setBatterySize(phone.getBatterySize());
+
+        /** set update timestamps */
+        existingPhone.setUpdated_at(LocalDateTime.now());
+
+        /** save mobile phone */
+        MobilePhonesRepository.save(existingPhone);
     }
 
     /**
@@ -123,18 +112,13 @@ public class MobilePhonesService {
      * @Errors ** IllegalStateException if the user does not exist + general
      */
     public void destroy(int id){
-        System.out.println("destroy service..");
-        try{
-            //check if phone exists
-            boolean phoneExists = MobilePhonesRepository.existsById(id);
-            if (!phoneExists) {
-                throw new IllegalStateException("Mobile phone does not exist");
-            }
-            MobilePhonesRepository.deleteById(id);
-        } catch (IllegalStateException ex) {
-            throw new IllegalArgumentException("Mobile phone does not exist -- for delete");
-        } catch (Exception ex){
-            throw new RuntimeException("Error deleting mobile phone by id..", ex);
+        //check if phone exists
+        boolean phoneExists = MobilePhonesRepository.existsById(id);
+
+        if (!phoneExists) {
+            throw new IllegalStateException();
         }
+
+        MobilePhonesRepository.deleteById(id);
     }
 }

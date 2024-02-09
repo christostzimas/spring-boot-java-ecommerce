@@ -6,6 +6,7 @@ import com.ct_ecommerce.eshop.Order.OrderService;
 import com.ct_ecommerce.eshop.OrderQuantities.OrderQuantities;
 import com.ct_ecommerce.eshop.Product.Product;
 import com.ct_ecommerce.eshop.SuccessfulOrdersQuantities;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class SuccessfulOrderService {
      * @param successfulOrderRepository ** used for db actions
      * @param orderService used for accessing and retrieving pending order information
      */
+    @Autowired
     public SuccessfulOrderService(SuccessfulOrderRepository successfulOrderRepository, OrderService orderService) {
         this.successfulOrderRepository = successfulOrderRepository;
         this.orderService = orderService;
@@ -38,22 +40,17 @@ public class SuccessfulOrderService {
     /**
      * Get all successful orders of a specific user
      * @param user ** user object
+     * @Errors IllegalArgumentException, Exception
      */
     public List<SuccessfulOrder> getAll(AppUser user) {
-        try{
-            List<SuccessfulOrder> successfulOrders = successfulOrderRepository.findOrdersByUser(user);
 
-            if (successfulOrders.isEmpty()) {
-                throw new IllegalStateException("No orders found");
-            }
+        List<SuccessfulOrder> successfulOrders = successfulOrderRepository.findOrdersByUser(user);
 
-            return successfulOrders;
-
-        }catch (IllegalStateException ex){
-            throw new IllegalArgumentException("No orders found");
-        } catch(Exception ex){
-            throw new RuntimeException("Error getting orders of user", ex);
+        if (successfulOrders.isEmpty()) {
+            throw new IllegalStateException();
         }
+
+        return successfulOrders;
     }
 
     /**
@@ -63,54 +60,51 @@ public class SuccessfulOrderService {
      */
     @Transactional
     public void markAsSuccessful(Long orderNo){
-        try{
-            /** get order from pending orders */
-            Order pendingOrder = orderService.getOrderByOrderNumber(orderNo);
+        /** get order from pending orders */
+        Order pendingOrder = orderService.getOrderByOrderNumber(orderNo);
 
-            /** lists of pending order and successful */
-            List<OrderQuantities> orderQuantitiesList = pendingOrder.getQuantities();
-            List<SuccessfulOrdersQuantities> successfulOrderQuantitiesList = new ArrayList<>();
+        /** lists of pending order and successful */
+        List<OrderQuantities> orderQuantitiesList = pendingOrder.getQuantities();
+        List<SuccessfulOrdersQuantities> successfulOrderQuantitiesList = new ArrayList<>();
 
-            /** create the new successful order object */
-            SuccessfulOrder order = new SuccessfulOrder();
+        /** create the new successful order object */
+        SuccessfulOrder order = new SuccessfulOrder();
 
-            /** loop order list and cast quantities to successfulOrdersQuantities */
-            for (OrderQuantities orderQuantities : orderQuantitiesList) {
-                SuccessfulOrdersQuantities quantities = new SuccessfulOrdersQuantities();
-                quantities.setProduct(orderQuantities.getProduct());
-                quantities.setQuantity(orderQuantities.getQuantity());
-                quantities.setOrder(order);
+        /** loop order list and cast quantities to successfulOrdersQuantities */
+        for (OrderQuantities orderQuantities : orderQuantitiesList) {
+            SuccessfulOrdersQuantities quantities = new SuccessfulOrdersQuantities();
+            quantities.setProduct(orderQuantities.getProduct());
+            quantities.setQuantity(orderQuantities.getQuantity());
+            quantities.setOrder(order);
 
-                successfulOrderQuantitiesList.add(quantities);
-            }
-
-            /** Set the rest fields of the successful order */
-            order.setUser(pendingOrder.getUser());
-            order.setAddress(pendingOrder.getAddress());
-            order.setTotalOrderPrice(pendingOrder.getTotalOrderPrice());
-            order.setOrderNumber(pendingOrder.getOrderNumber());
-            order.setQuantities(successfulOrderQuantitiesList);
-
-            /** timestamps */
-            order.setCreatedAt(LocalDateTime.now());
-            order.setUpdatedAt(LocalDateTime.now());
-
-            /** store successful order */
-            successfulOrderRepository.save(order);
-            /** delete pending order */
-            orderService.deleteByID(pendingOrder.getId());
-
-            //TODO: return id
-        } catch(Exception ex){
-            System.out.println(ex.getMessage());
-            throw new RuntimeException("Error marking order as successful", ex);
+            successfulOrderQuantitiesList.add(quantities);
         }
+
+        /** Set the rest fields of the successful order */
+        order.setUser(pendingOrder.getUser());
+        order.setAddress(pendingOrder.getAddress());
+        order.setTotalOrderPrice(pendingOrder.getTotalOrderPrice());
+        order.setOrderNumber(pendingOrder.getOrderNumber());
+        order.setQuantities(successfulOrderQuantitiesList);
+
+        /** timestamps */
+        order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
+
+        /** store successful order */
+        successfulOrderRepository.save(order);
+        /** delete pending order */
+        orderService.deleteByID(pendingOrder.getId());
+
+        //TODO: return id
     }
 
     /**
      * Check if user has bought a product
      * @param productId The id of the product
      * @param user The user of the order
+     * @Errors Exception
+     * @Returns true if user has bought the product else false
      */
     public boolean hasUserPurchasedProduct(AppUser user, int productId) {
         /** Get all user orders */

@@ -6,6 +6,7 @@ import com.ct_ecommerce.eshop.Order.OrderService;
 import com.ct_ecommerce.eshop.ResponseServices.ResponseService;
 import com.ct_ecommerce.eshop.dto.OrderNumberDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,7 @@ public class SuccessfulOrderController {
     /**
      * Get all successful orders for specific user
      * @GetMapping ** = get request.
-     * @Param user ** The authenticated user
+     * @param user ** The authenticated user
      * @Errors RuntimeException
      * @Returns http response
      */
@@ -54,16 +55,18 @@ public class SuccessfulOrderController {
             List<SuccessfulOrder> orders = SuccessfulOrderService.getAll(user);
 
             return ResponseService.SuccessResponse(orders);
-        } catch (Exception ex){
-            return ResponseService.BadRequestResponse(ex.getMessage());
+        } catch (IllegalStateException ex){
+            throw new IllegalArgumentException("No orders found");
+        } catch(Exception ex){
+            throw new RuntimeException("Error getting orders of user", ex);
         }
     }
 
     /**
      * Mark order as successful
      * @PostMapping ** = post request.
-     * @Param user ** The authenticated user
-     * @Param orderNumberDTO ** orderNumberDTO object containing the order number
+     * @param user ** The authenticated user
+     * @param orderNumberDTO ** orderNumberDTO object containing the order number
      * @Errors Exception
      * @Returns http response
      */
@@ -71,7 +74,6 @@ public class SuccessfulOrderController {
     public ResponseEntity markOrderAsSuccessful(@AuthenticationPrincipal AppUser user, @RequestBody OrderNumberDTO orderNumberDTO){
         /** Check if user is the administrator */
         if(!AppUserService.isUserAdmin(user)){
-            System.out.println(user.toString());
             return ResponseService.BadRequestResponse("Not allowed");
         }
 
@@ -80,6 +82,12 @@ public class SuccessfulOrderController {
 
             return ResponseService.SuccessResponse();
 
+        } catch (IllegalArgumentException ex) {
+            return ResponseService.BadRequestResponse("Can not save empty object");
+        } catch(OptimisticLockingFailureException ex){
+            return ResponseService.BadRequestResponse(ex.getMessage());
+        }catch(RuntimeException ex){
+            return ResponseService.BadRequestResponse("Pending order can not be found");
         } catch(Exception ex){
             return ResponseService.BadRequestResponse(ex.getMessage());
         }

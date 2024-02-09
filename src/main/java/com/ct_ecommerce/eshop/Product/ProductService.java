@@ -1,6 +1,7 @@
 package com.ct_ecommerce.eshop.Product;
 
 import com.ct_ecommerce.eshop.dto.UnavailableProductsDTO;
+import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,16 +33,16 @@ public class ProductService {
 
     /**
      * Get all products
+     * @Returns List of all products
      */
     public List<Product> getProducts(){
-        try{
-            return ProductRepository.findAll();
-        }catch (IllegalStateException e) {
-            throw new IllegalArgumentException("No products found");
-        } catch(Exception ex){
-            //general error
-            throw new RuntimeException("Error getting all the products", ex);
+        List<Product> products = ProductRepository.findAll();
+
+        if(products.isEmpty()){
+            throw new IllegalStateException();
         }
+
+        return products;
     }
 
     /**
@@ -50,44 +51,36 @@ public class ProductService {
      * @Errors ** IllegalStateException if product exists
      */
     public void addNewProduct(Product product) {
-        try {
-            Optional<Product> productByTitleExists = ProductRepository.findProductByTitle(product.getTitle());
-            if (productByTitleExists.isPresent()) {
-                throw new IllegalStateException("Product already exists");
-                //check also for category
-            }
-            product.setSales(0);
-            product.setUpdated_at(LocalDateTime.now());
-            product.setCreated_at(LocalDateTime.now());
-            ProductRepository.save(product);
-        }catch (IllegalStateException e) {
-            throw new IllegalArgumentException("Product already exists");
-        } catch(Exception ex){
-            //general error
-            throw new RuntimeException("Error saving products -exists", ex);
+        /** Check if product exists */
+        Optional<Product> productByTitleExists = ProductRepository.findProductByTitle(product.getTitle());
+
+        if (productByTitleExists.isPresent()) {
+            throw new IllegalStateException();
+            //check also for category
         }
+
+        /** set sales & timestamps */
+        product.setSales(0);
+        product.setUpdated_at(LocalDateTime.now());
+        product.setCreated_at(LocalDateTime.now());
+
+        ProductRepository.save(product);
     }
 
     /**
      * Get existing product by id
      * @param id The product id.
-     * @Errors ** IllegalStateException if the product does not exist
+     * @Errors ** IllegalStateException, EntityExistsException
      */
     public Product getProductByID(int id) {
-        try {
-            /** Check if product exists */
-            boolean exists = ProductRepository.existsById(id);
-            if (!exists) {
-                throw new IllegalStateException("Product does not exist");
-            }
 
-            return ProductRepository.getReferenceById(id);
-        }catch (IllegalStateException e) {
-            throw new IllegalArgumentException("Product  does not exist --delete");
-        } catch(Exception ex){
-            //general error
-            throw new RuntimeException("Error fetching product");
+        /** Check if product exists */
+        boolean exists = ProductRepository.existsById(id);
+        if (!exists) {
+            throw new IllegalStateException();
         }
+
+        return ProductRepository.getReferenceById(id);
     }
 
     /**
@@ -96,49 +89,39 @@ public class ProductService {
      * @Errors ** IllegalStateException if the product does not exist
      */
     public void deleteProduct(int id) {
-        try {
-            boolean exists = ProductRepository.existsById(id);
-            if (!exists) {
-                throw new IllegalStateException("Product does not exist");
-            }
-
-            ProductRepository.deleteById(id);
-        }catch (IllegalStateException e) {
-            throw new IllegalArgumentException("Product  does not exist --delete");
-        } catch(Exception ex){
-            //general error
-            throw new RuntimeException("Error deleting product", ex);
+        /** Check if product exists */
+        boolean exists = ProductRepository.existsById(id);
+        if (!exists) {
+            throw new IllegalStateException();
         }
+
+        ProductRepository.deleteById(id);
     }
 
     /**
      * Update existing product by id
      * @param id ** id of saved product
      * @param product ** updated data
-     * @Errors ** IllegalStateException if the product does not exist
+     * @Errors ** IllegalStateException
      */
     public void updateProduct(int id, Product product) {
-        try {
-            Product existingProduct = ProductRepository.getReferenceById(id);
-            if(existingProduct == null){
-                throw new IllegalStateException("Product does not exist");
-            }
-            existingProduct.setTitle(product.getTitle());
-            existingProduct.setDescription(product.getDescription());
-            existingProduct.setPrice(product.getPrice());
-            existingProduct.setDiscount(product.getDiscount());
-            existingProduct.setStock(product.getStock());
-            existingProduct.setBrand(product.getBrand());
-            existingProduct.setCategory(product.getCategory());
-            existingProduct.setUpdated_at(LocalDateTime.now());
+        /** Check if product exists */
+        Product existingProduct = ProductRepository.getReferenceById(id);
 
-            ProductRepository.save(existingProduct);
-        }catch (IllegalStateException e) {
-            throw new IllegalArgumentException("Product  does not exist --update");
-        } catch(Exception ex){
-            //general error
-            throw new RuntimeException("Error updating product", ex);
+        if(existingProduct == null){
+            throw new IllegalStateException();
         }
+
+        existingProduct.setTitle(product.getTitle());
+        existingProduct.setDescription(product.getDescription());
+        existingProduct.setPrice(product.getPrice());
+        existingProduct.setDiscount(product.getDiscount());
+        existingProduct.setStock(product.getStock());
+        existingProduct.setBrand(product.getBrand());
+        existingProduct.setCategory(product.getCategory());
+        existingProduct.setUpdated_at(LocalDateTime.now());
+
+        ProductRepository.save(existingProduct);
     }
 
     /**
@@ -147,14 +130,10 @@ public class ProductService {
      * @return  ** return list of products
      */
     public List<Product> getBestSellers(int numOfProducts){
-        try{
-            Sort sortBySalesDesc = Sort.by(Sort.Direction.DESC, "sales");
-            Pageable pageable = PageRequest.of(0, numOfProducts, sortBySalesDesc);
+        Sort sortBySalesDesc = Sort.by(Sort.Direction.DESC, "sales");
+        Pageable pageable = PageRequest.of(0, numOfProducts, sortBySalesDesc);
 
-            return ProductRepository.findAll(pageable).getContent();
-        }catch (Exception ex) {
-            throw new RuntimeException("Error getting best-selling products", ex);
-        }
+        return ProductRepository.findAll(pageable).getContent();
     }
 
     /**

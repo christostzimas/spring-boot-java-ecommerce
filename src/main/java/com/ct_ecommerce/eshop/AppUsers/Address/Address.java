@@ -101,18 +101,6 @@ public class Address {
     /** Default constructor */
     public Address(){}
 
-    /** full constructor */
-    public Address(int id, String addressLine1, String addressLine2, String city, String country, String postCode, AppUser user, Boolean active) {
-        this.id = id;
-        this.addressLine1 = addressLine1;
-        this.addressLine2 = addressLine2;
-        this.city = city;
-        this.country = country;
-        this.postCode = postCode;
-        this.activeAddress = active;
-        this.user = user;
-    }
-
     /** constructor without id */
     public Address(String addressLine1, String addressLine2, String city, String country, String postCode, AppUser user, Boolean active) {
         this.addressLine1 = addressLine1;

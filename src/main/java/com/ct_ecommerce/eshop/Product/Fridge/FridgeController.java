@@ -40,9 +40,15 @@ public class FridgeController {
         try {
             Fridge discountOfficer = new Fridge();
             List<Fridge> allFridges = (List<Fridge>) discountOfficer.calculateDiscounts(fridgeService.getProducts());
+
             return ResponseService.SuccessResponse(allFridges);
-        }catch (Exception ex){
-            return ResponseService.BadRequestResponse(ex.getMessage());
+        } catch (IllegalStateException e) {
+
+            return ResponseService.BadRequestResponse("No products found in fridge category");
+        } catch(Exception ex){
+
+            //general error
+            return ResponseService.BadRequestResponse("Error getting all the fridges");
         }
     }
 
@@ -50,6 +56,7 @@ public class FridgeController {
      * Create new product in fridge category
      * @PostMapping ** = post request.
      * @RequestBody ** = body of the request
+     * @param fridge The new fridge object
      * @Returns http response
      */
     @PostMapping(path = "/create")
@@ -60,9 +67,9 @@ public class FridgeController {
 
             return ResponseService.SuccessResponse();
         } catch (IllegalArgumentException ex){
-            return ResponseService.BadRequestResponse(ex.getMessage());
-        } catch (RuntimeException ex) {
-            return ResponseService.BadRequestResponse(ex.getMessage());
+            return ResponseService.BadRequestResponse("Fridge already exists");
+        } catch (Exception ex) {
+            return ResponseService.BadRequestResponse("Error storing new fridges");
         }
     }
 
@@ -70,8 +77,8 @@ public class FridgeController {
      * Update fridge and super object
      * @PatchMapping ** = update request.
      * @PatchMapping ** annotation
-     * @PathVariable ** name of variable in url
-     * @RequestBody ** = body of the request
+     * @param id PathVariable (fridgeID) The id of fridge for update
+     * @param fridge The updated fridge product
      * @Returns http response
      */
     @PatchMapping(path = "/{fridgeID}")
@@ -81,17 +88,17 @@ public class FridgeController {
             fridgeService.update(id, fridge);
 
             return ResponseService.SuccessResponse();
-        } catch (IllegalArgumentException ex){
-            return ResponseService.BadRequestResponse(ex.getMessage());
-        } catch (RuntimeException ex) {
-            return ResponseService.BadRequestResponse(ex.getMessage());
+        } catch (IllegalStateException ex){
+            return ResponseService.BadRequestResponse("Fridge does not exist");
+        } catch (Exception ex) {
+            return ResponseService.BadRequestResponse("Error updating fridge by id..");
         }
     }
 
     /**
      * Delete fridge and super object
      * @PatchMapping ** = delete request.
-     * @PathVariable ** name of variable in url
+     * @param id PathVariable (fridgeID) The id of fridge
      */
     @DeleteMapping(path = "/{fridgeID}")
     public ResponseEntity destroy(@PathVariable("fridgeID") int id){
@@ -100,10 +107,10 @@ public class FridgeController {
             fridgeService.deleteProduct(id);
 
             return ResponseService.SuccessResponse();
-        } catch (IllegalArgumentException ex){
-            return ResponseService.BadRequestResponse(ex.getMessage());
-        } catch (RuntimeException ex) {
-            return ResponseService.BadRequestResponse(ex.getMessage());
+        } catch (IllegalStateException ex){
+            return ResponseService.BadRequestResponse("Product does not exist");
+        } catch (Exception ex) {
+            return ResponseService.BadRequestResponse("Error deleting fridge by id..");
         }
     }
 }

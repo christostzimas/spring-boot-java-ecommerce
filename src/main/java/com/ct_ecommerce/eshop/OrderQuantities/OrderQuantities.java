@@ -32,6 +32,7 @@ public class OrderQuantities {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
+    /** Getters & Setters */
     public int getId() {
         return id;
     }

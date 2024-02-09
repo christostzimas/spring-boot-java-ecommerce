@@ -7,7 +7,7 @@ import com.ct_ecommerce.eshop.ResponseServices.ResponseService;
 import com.ct_ecommerce.eshop.SuccessfulOrder.SuccessfulOrderService;
 import com.ct_ecommerce.eshop.dto.OrderReviewDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Controller for all requests related to successful orders
+ * Controller for all requests related to product reviews
  * @Variable ProductReviewsService ** service layer for reviews.
  * @Variable SuccessfulOrderService ** service layer for successful orders.
- * @Variable SuccessfulOrderService ** service layer for successful orders.
+ * @Variable ProductService ** service layer for products.
  * @Variable ResponseService ** service used to pass http responses to client
- * @RequestMapping("/api/products/orders") ** route prefix
+ * @RequestMapping("/api/products/reviews") ** route prefix
  */
 
 @RestController
@@ -46,9 +46,9 @@ public class ProductReviewsController {
     /**
      * Get all reviews for specific product
      * @GetMapping ** = get request.
-     * @Param user ** The authenticated user
+     * @param user ** The authenticated user
      * @param productID the product id
-     * @Errors RuntimeException
+     * @Errors IllegalStateException, Exception
      * @Returns http response
      */
     @GetMapping("/{productID}")
@@ -60,17 +60,20 @@ public class ProductReviewsController {
             List<ProductReviews> orders = ProductReviewsService.getAllByProductID(product);
 
             return ResponseService.SuccessResponse(orders);
-        } catch (RuntimeException ex){
-            return ResponseService.BadRequestResponse(ex.getMessage());
+        } catch (IllegalStateException ex){
+            return ResponseService.BadRequestResponse("Product review does not exist");
+        } catch(Exception ex){
+            //general error
+            return ResponseService.BadRequestResponse("Error fetching product review");
         }
     }
 
     /**
      * Post new review
      * @PostMapping ** = post request.
-     * @Param user ** The authenticated user
-     * @Param orderReviewDTO ** orderReviewDTO object containing the order number
-     * @Errors Exception
+     * @param user ** The authenticated user
+     * @param orderReviewDTO ** orderReviewDTO object containing the order number
+     * @Errors Exception, RuntimeException
      * @Returns http response
      */
     @PostMapping("/create")
@@ -84,7 +87,7 @@ public class ProductReviewsController {
             boolean hasUserBoughtProduct = SuccessfulOrderService.hasUserPurchasedProduct(user, product.getId());
 
             if(!hasUserBoughtProduct){
-                throw new RuntimeException("Can not submit review because you haven't bought or received this product yet");
+                throw new RuntimeException();
             }
 
             /** create new object */
@@ -98,8 +101,14 @@ public class ProductReviewsController {
             ProductReviewsService.saveReview(review);
 
             return ResponseService.SuccessResponse();
-        } catch (RuntimeException ex){
-            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+            return ResponseService.BadRequestResponse("Can not save empty object");
+        } catch(OptimisticLockingFailureException ex){
+            return ResponseService.BadRequestResponse(ex.getMessage());
+        } catch(RuntimeException ex){
+            return ResponseService.BadRequestResponse("Can not submit review because you haven't bought or received this product yet");
+        } catch (Exception ex){
+            return ResponseService.BadRequestResponse(ex.getMessage());
         }
 
     }

@@ -22,30 +22,19 @@ public class ProductReviewsService {
     /**
      * Get all reviews for a product
      * @param product The product
+     * @Errors Exception
+     * @Returns Product review
      */
     public List<ProductReviews> getAllByProductID(Product product) {
-        try{
-            return ProductReviewsRepository.findProductById(product);
-        } catch (Exception ex){
-            throw new RuntimeException("error retrieving product reviews " + ex.getMessage());
-        }
+        return ProductReviewsRepository.findProductById(product);
     }
 
     /**
      * Save new product review
      * @param review The review object
+     * @Errors IllegalArgumentException, OptimisticLockingFailureException
      */
     public void saveReview(ProductReviews review) {
-        try{
-            ProductReviewsRepository.save(review);
-        } catch (IllegalArgumentException ex){
-            /** In case object is null */
-            System.out.println(ex.getMessage());
-            throw new RuntimeException("Object cannot be empty ");
-
-        } catch (OptimisticLockingFailureException ex){
-            System.out.println(ex.getMessage());
-            throw new RuntimeException("Error storing review..");
-        }
+        ProductReviewsRepository.save(review);
     }
 }

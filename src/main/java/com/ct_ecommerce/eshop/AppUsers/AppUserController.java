@@ -31,12 +31,19 @@ public class AppUserController {
     /**
      * Create new user
      * @PostMapping ** = post request.
+     * @param registrationUser The information of the new user
      */
     @PostMapping(path = "/register")
     public ResponseEntity store(@RequestBody AppUser registrationUser){
         try {
             //create new user object
-            AppUser newUser = new AppUser(registrationUser.getUsername(), registrationUser.getPassword(), registrationUser.getEmail(), registrationUser.getFirstName(), registrationUser.getLastName());
+            AppUser newUser = new AppUser(
+                    registrationUser.getUsername(),
+                    registrationUser.getPassword(),
+                    registrationUser.getEmail(),
+                    registrationUser.getFirstName(),
+                    registrationUser.getLastName()
+            );
 
             //call service to save
             AppUserService.addNewUser(newUser);
@@ -52,7 +59,7 @@ public class AppUserController {
     /**
      * Log in existing user
      * @PostMapping ** = post request.
-     * @RequestBody ** = body of the request
+     * @param appUserLoginBody Login information of user (username, email)
      */
     @PostMapping(path = "/login")
     public ResponseEntity loginUser(@RequestBody AppUserLoginBody appUserLoginBody){

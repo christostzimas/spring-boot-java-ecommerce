@@ -119,17 +119,6 @@ public class AppUser {
     public AppUser() {
     }
 
-    /** constructor all fields except timestamps */
-    public AppUser(int id, String username, String password, String email, String firstName, String lastName, List<Address> addresses) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.addresses = addresses;
-    }
-
     /** constructor without id and timestamps */
     public AppUser(String username, String password, String email, String firstName, String lastName) {
         this.username = username;
@@ -137,6 +126,8 @@ public class AppUser {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     /** toString */

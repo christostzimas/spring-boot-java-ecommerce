@@ -29,13 +29,9 @@ public class WishListService {
      * @return The List of WishList items.
      */
     public List<WishList> getItemsByUser(AppUser user) {
-        try {
-            List<WishList> items = WishListRepository.getAllByUser(user);
+        List<WishList> items = WishListRepository.getAllByUser(user);
 
-            return items;
-        } catch(Exception ex){
-            throw new RuntimeException("Error getting orders of user", ex);
-        }
+        return items;
     }
 
     /**
@@ -43,11 +39,7 @@ public class WishListService {
      * @param item The wishlist item
      */
     public void addItemToWishlist(WishList item) {
-        try {
-            WishListRepository.save(item);
-        } catch(Exception ex){
-            throw new RuntimeException("Error getting orders of user", ex);
-        }
+        WishListRepository.save(item);
     }
 
     /**
@@ -56,17 +48,13 @@ public class WishListService {
      * @param user The user who owns the item
      */
     public boolean itemExists(AppUser user, Product product){
-        try{
-            WishList item = WishListRepository.itemExists(user, product);
+        WishList item = WishListRepository.itemExists(user, product);
 
-            if(item == null){
-                return false;
-            }
-            return true;
-        } catch (Exception ex){
-            System.out.println(ex.getMessage());
-            throw new RuntimeException("Error checking if product exists.." + ex);
+        if(item == null){
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -76,12 +64,6 @@ public class WishListService {
      */
     @Transactional
     public void removeItem(AppUser user, Product product) {
-        try{
-
-            WishListRepository.deleteByUserAndProduct(user, product);
-
-        } catch (Exception ex){
-            throw new RuntimeException("Error deleting product from wishlist.." + ex);
-        }
+        WishListRepository.deleteByUserAndProduct(user, product);
     }
 }

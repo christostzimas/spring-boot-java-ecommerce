@@ -6,6 +6,7 @@ import com.ct_ecommerce.eshop.Product.ProductService;
 import com.ct_ecommerce.eshop.ResponseServices.ResponseService;
 import com.ct_ecommerce.eshop.dto.WishListItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class WishListController {
      * Get all wishlist items for specific user
      * @GetMapping ** = get request.
      * @Param user ** The authenticated user
-     * @Errors RuntimeException
+     * @Errors Exception
      * @Returns http response
      */
     @GetMapping
@@ -52,15 +53,15 @@ public class WishListController {
 
             return ResponseService.SuccessResponse(items);
         } catch (Exception ex){
-            return ResponseService.BadRequestResponse(ex.getMessage());
+            return ResponseService.BadRequestResponse("Error getting wishlist items");
         }
     }
 
     /**
      * Add new item to wishlist
      * @PostMapping ** = post request.
-     * @Param user ** The authenticated user
-     * @Param item ** wishlist item to add
+     * @param user ** The authenticated user
+     * @param itemDTO ** wishlist item to add
      * @Errors Exception
      * @Returns http response
      */
@@ -87,6 +88,12 @@ public class WishListController {
 
             return ResponseService.SuccessResponse();
 
+        } catch (IllegalArgumentException ex) {
+            return ResponseService.BadRequestResponse("Wishlist item already exists");
+        } catch(OptimisticLockingFailureException ex){
+            return ResponseService.BadRequestResponse(ex.getMessage());
+        }catch(IllegalStateException ex){
+            return ResponseService.BadRequestResponse("Selected product does not exist");
         } catch(Exception ex){
             return ResponseService.BadRequestResponse(ex.getMessage());
         }
@@ -119,6 +126,8 @@ public class WishListController {
             return ResponseService.BadRequestResponse(ex.getMessage());
         } catch (RuntimeException ex) {
             return ResponseService.BadRequestResponse(ex.getMessage());
+        } catch (Exception ex){
+            return ResponseService.BadRequestResponse("Error removing item from wishlist");
         }
     }
 }

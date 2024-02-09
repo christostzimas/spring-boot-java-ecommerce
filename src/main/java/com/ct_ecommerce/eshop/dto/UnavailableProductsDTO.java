@@ -1,7 +1,7 @@
 package com.ct_ecommerce.eshop.dto;
 
 /**
- * Class that represents products that can't fulfill the order due to low stock
+ * Class that represents products that can't fulfill the order due to low stock.
  */
 public class UnavailableProductsDTO {
     /** Id of product */

@@ -42,6 +42,7 @@ public class Order {
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
+    /** Getters & Setters */
     public int getId() {
         return id;
     }

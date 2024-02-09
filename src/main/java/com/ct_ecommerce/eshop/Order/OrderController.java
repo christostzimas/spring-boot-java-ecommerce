@@ -7,6 +7,7 @@ import com.ct_ecommerce.eshop.Product.ProductService;
 import com.ct_ecommerce.eshop.ResponseServices.ResponseService;
 import com.ct_ecommerce.eshop.dto.UnavailableProductsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,7 @@ public class OrderController {
     /**
      * Get all orders for specific user
      * @GetMapping ** = get request.
+     * @param user The authenticated user
      * @Errors RuntimeException
      * @Returns http response
      */
@@ -50,14 +52,18 @@ public class OrderController {
             List<Order> orders = OrderService.getUserOrders(user);
 
             return ResponseService.SuccessResponse(orders);
+        } catch(IllegalStateException ex){
+            return ResponseService.BadRequestResponse("No orders found");
         } catch (Exception ex){
-            return ResponseService.BadRequestResponse(ex.getMessage());
+            return ResponseService.BadRequestResponse("Error getting orders of user");
         }
     }
 
     /**
      * Submit new order
      * @PostMapping ** = post request.
+     * @param user The authenticated user
+     * @param recievedOrder The order information
      * @Errors IllegalStateException, RuntimeException
      * @Returns http response
      */
@@ -113,8 +119,12 @@ public class OrderController {
             String message = "Order " + orderNo + " was submitted successfully";
 
             return ResponseService.SuccessResponseWithMsg(message);
-        } catch (RuntimeException ex) {
+        } catch (IllegalArgumentException ex) {
+            return ResponseService.BadRequestResponse("Can not save empty object");
+        } catch(OptimisticLockingFailureException ex){
             return ResponseService.BadRequestResponse(ex.getMessage());
+        } catch(Exception ex){
+            return ResponseService.BadRequestResponse("Error storing order");
         }
     }
 }

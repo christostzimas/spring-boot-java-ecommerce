@@ -1,6 +1,8 @@
 package com.ct_ecommerce.eshop.Order;
 
 import com.ct_ecommerce.eshop.AppUsers.AppUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,67 +22,59 @@ public class OrderService {
      * @Autowired ** config to be autowired by Spring's dependency injection facilities.
      * @param orderRepository ** used for db actions
      */
+    @Autowired
     public OrderService(OrderRepository orderRepository) {
         OrderRepository = orderRepository;
     }
 
     /**
      * Get all orders for specific user
+     * @param user The authenticated user.
      * @Errors ** IllegalStateException, RuntimeException
+     * @Returns List of all the user orders
      */
     public List<Order> getUserOrders(AppUser user){
-        try {
-            List<Order> orders = OrderRepository.findOrdersByUser(user);
+        /** Get all orders of user */
+        List<Order> orders = OrderRepository.findOrdersByUser(user);
 
-            if (orders.isEmpty()) {
-                throw new IllegalStateException("No orders found");
-            }
-            return orders;
-        } catch (IllegalStateException e) {
-            throw new IllegalArgumentException("No orders found");
-        } catch(Exception ex){
-            throw new RuntimeException("Error getting orders of user", ex);
+        if (orders.isEmpty()) {
+            throw new IllegalStateException();
         }
+
+        return orders;
     }
 
     /**
      * Get order by order_number
-     * @Param orderNo ** The order number.
+     * @param orderNo The order number.
      * @Errors RuntimeException
+     * @Returns The order with specific order number
      */
     public Order getOrderByOrderNumber(Long orderNo){
-        try{
-            return OrderRepository.getReferenceByOrderNumber(orderNo);
-
-        } catch(Exception ex){
-            throw new RuntimeException("Error fetching order", ex);
-        }
+        return OrderRepository.getReferenceByOrderNumber(orderNo);
     }
 
     /**
-     * Saves new order
-     * @Param order ** The order object
+     * Save new order
+     * @param order The order object
      * @Errors RuntimeException
      */
     @Transactional
     public Order saveNewOrder(Order order) {
-        try{
-            return OrderRepository.save(order);
-
-        } catch(Exception ex){
-            throw new RuntimeException("Error storing order", ex);
-        }
+        return OrderRepository.save(order);
     }
 
     /**
      * Delete order by id
-     * @Param id ** The order id
+     * @param id The id of the order
      * @Errors RuntimeException
      */
     public void deleteByID(int id){
         try{
             OrderRepository.deleteById(id);
-        } catch(Exception ex){
+        } catch(IllegalArgumentException ex){
+            throw new IllegalArgumentException("Id is not provided");
+        }catch(Exception ex){
             throw new RuntimeException("Error fetching order", ex);
         }
     }

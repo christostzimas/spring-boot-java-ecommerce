@@ -1,5 +1,8 @@
 package com.ct_ecommerce.eshop.dto;
 
+/**
+ * Class that represents the body of a submitted rating on a product.
+ */
 public class OrderReviewDTO {
 
     private double startRating;

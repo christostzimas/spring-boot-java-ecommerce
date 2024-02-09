@@ -2,6 +2,7 @@ package com.ct_ecommerce.eshop.Product.MobilePhones;
 
 import com.ct_ecommerce.eshop.ResponseServices.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,17 +42,19 @@ public class MobilePhonesController {
             MobilePhones discountOfficer = new MobilePhones();
 
             return ResponseService.SuccessResponse((List<MobilePhones>) discountOfficer.calculateDiscounts(MobilePhoneService.getAll()));
-        } catch (IllegalArgumentException ex){
-            return ResponseService.BadRequestResponse(ex.getMessage());
-        } catch (RuntimeException ex) {
-            return ResponseService.BadRequestResponse(ex.getMessage());
+        } catch(IllegalArgumentException ex){
+            return ResponseService.BadRequestResponse("Error getting products");
+        } catch (IllegalStateException ex){
+            return ResponseService.BadRequestResponse("No products (mobile phones) found");
+        } catch (Exception ex) {
+            return ResponseService.BadRequestResponse("Error getting all the mobile phones");
         }
     }
 
     /**
      * Create new mobile phone
      * @PostMapping ** = post request.
-     * @RequestBody ** = body of the request
+     * @param mobilePhone The mobile phone object (body of the request)
      * @Returns http response
      */
     @PostMapping(path = "/create")
@@ -62,9 +65,13 @@ public class MobilePhonesController {
 
             return ResponseService.SuccessResponse();
         } catch (IllegalArgumentException ex){
+            return ResponseService.BadRequestResponse("Can not save empty object");
+        } catch (OptimisticLockingFailureException ex) {
             return ResponseService.BadRequestResponse(ex.getMessage());
-        } catch (RuntimeException ex) {
-            return ResponseService.BadRequestResponse(ex.getMessage());
+        } catch (IllegalStateException ex) {
+            return ResponseService.BadRequestResponse("Phone already exists");
+        } catch (Exception ex){
+            throw new RuntimeException("Error storing new mobile phone");
         }
     }
 
@@ -72,8 +79,8 @@ public class MobilePhonesController {
      * Update mobile phone by id
      * @PatchMapping ** = update request.
      * @PatchMapping ** annotation
-     * @PathVariable ** name of variable in url
-     * @RequestBody ** = body of the request
+     * @param id (PathVariable) The id of mobile phone.
+     * @param phone (RequestBody) The mobile phone object
      * @Returns http response
      */
     @PatchMapping(path = "/{phoneID}")
@@ -84,16 +91,20 @@ public class MobilePhonesController {
 
             return ResponseService.SuccessResponse();
         } catch (IllegalArgumentException ex){
+            return ResponseService.BadRequestResponse("Can not update empty object");
+        } catch (OptimisticLockingFailureException ex) {
             return ResponseService.BadRequestResponse(ex.getMessage());
-        } catch (RuntimeException ex) {
+        } catch (IllegalStateException ex) {
+            return ResponseService.BadRequestResponse("Mobile phone does not exist");
+        } catch (Exception ex) {
             return ResponseService.BadRequestResponse(ex.getMessage());
         }
     }
 
     /**
      * Delete mobile phone by id
-     * @PatchMapping ** = delete request.
-     * @PathVariable ** name of variable in url
+     * @DeleteMapping ** = delete request.
+     * @param id (PathVariable) The id of mobile phone
      * @Returns http response
      */
     @DeleteMapping(path = "/{phoneID}")
@@ -102,10 +113,12 @@ public class MobilePhonesController {
             MobilePhoneService.destroy(id);
 
             return ResponseService.SuccessResponse();
+        } catch (IllegalStateException ex) {
+            return ResponseService.BadRequestResponse("Mobile phone does not exist");
         } catch (IllegalArgumentException ex){
-            return ResponseService.BadRequestResponse(ex.getMessage());
-        } catch (RuntimeException ex) {
-            return ResponseService.BadRequestResponse(ex.getMessage());
+            return ResponseService.BadRequestResponse("Id is not provided");
+        } catch (Exception ex) {
+            return ResponseService.BadRequestResponse("Error deleting mobile phone");
         }
     }
 }

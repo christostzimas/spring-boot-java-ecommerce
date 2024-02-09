@@ -4,7 +4,7 @@ import com.ct_ecommerce.eshop.Product.Product;
 import jakarta.persistence.*;
 
 /**
- * Class representing users of the app
+ * Class representing products of fridge category (extends products)
  * @Id ** primary key
  * @Entity ** database entity
  * @Table ** Table name in db

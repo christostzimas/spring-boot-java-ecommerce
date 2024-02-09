@@ -11,7 +11,8 @@ import java.util.Optional;
 /**
  * Service layer for users
  * @Variable AppUserRepository ** repository layer for users.
- * @Variable encoderService ** for password encryption
+ * @Variable EncoderService ** for password encryption
+ * @Variable JWTService ** for token generation
  */
 @Service
 public class AppUserService {
@@ -24,6 +25,7 @@ public class AppUserService {
      * @Autowired ** config to be autowired by Spring's dependency injection facilities.
      * @param appUserRepository ** used for db actions
      * @param encoderService ** used for passwords
+     * @param jwtService ** used for token generation
      */
     @Autowired
     public AppUserService(AppUserRepository appUserRepository, EncoderService encoderService, JWTService jwtService) {
@@ -31,6 +33,7 @@ public class AppUserService {
         EncoderService = encoderService;
         JWTService = jwtService;
     }
+
     /**
      * Save new user
      * @param user ** user for save
@@ -51,9 +54,9 @@ public class AppUserService {
             /** Save new user */
             AppUserRepository.save(user);
         }catch(IllegalStateException ex){
-            throw new IllegalArgumentException("User already exists --update");
+            throw new IllegalArgumentException("User already exists");
         }catch(Exception ex){
-            throw new RuntimeException("Error creating the user", ex);
+            throw new RuntimeException("Error creating the user");
         }
     }
 
@@ -86,8 +89,8 @@ public class AppUserService {
     }
 
     /**
-     * Method to check if an authenticated user has permission to a user ID.
-     * @param user the authenticated user.
+     * Method to check if an authenticated user is the administrator
+     * @param user The authenticated user.
      * @return true if they have permission, false otherwise.
      */
     public boolean isUserAdmin(AppUser user) {

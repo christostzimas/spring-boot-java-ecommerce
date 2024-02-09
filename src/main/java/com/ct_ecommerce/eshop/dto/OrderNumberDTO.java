@@ -2,7 +2,7 @@ package com.ct_ecommerce.eshop.dto;
 
 /**
  * Class that represents the order number of a pending order
- * Used to mark an order as successful unique the unique order number
+ * Used to mark an order as successful using the unique order number
  */
 public class OrderNumberDTO {
     private long orderNumber;
