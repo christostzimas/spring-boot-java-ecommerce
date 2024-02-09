@@ -1,8 +1,11 @@
 package com.ct_ecommerce.eshop.Product.Fridge;
 
+import com.ct_ecommerce.eshop.AppUsers.AppUser;
+import com.ct_ecommerce.eshop.AppUsers.AppUserService;
 import com.ct_ecommerce.eshop.ResponseServices.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,15 +21,17 @@ import java.util.List;
 public class FridgeController {
     private final FridgeService fridgeService;
     private final ResponseService ResponseService;
+    private final AppUserService AppUserService;
 
     /**
      * Constructor
      * @Autowired ** config to be autowired by Spring's dependency injection facilities.
      */
     @Autowired
-    public FridgeController(FridgeService fridgeService, ResponseService ResponseService){
+    public FridgeController(FridgeService fridgeService, ResponseService ResponseService,AppUserService appUserService){
         this.fridgeService = fridgeService;
         this.ResponseService = ResponseService;
+        this.AppUserService = appUserService;
     }
 
     /**
@@ -60,9 +65,14 @@ public class FridgeController {
      * @Returns http response
      */
     @PostMapping(path = "/create")
-    public ResponseEntity store(@RequestBody Fridge fridge){
+    public ResponseEntity store(@AuthenticationPrincipal AppUser user, @RequestBody Fridge fridge){
         //validation
         try {
+            /** Check if user is the administrator */
+            if(!AppUserService.isUserAdmin(user)){
+                return ResponseService.BadRequestResponse("Not allowed");
+            }
+
             fridgeService.addNewProduct(fridge);
 
             return ResponseService.SuccessResponse();
@@ -82,9 +92,14 @@ public class FridgeController {
      * @Returns http response
      */
     @PatchMapping(path = "/{fridgeID}")
-    public ResponseEntity updateFridge(@PathVariable("fridgeID") int id, @RequestBody Fridge fridge){
+    public ResponseEntity updateFridge(@AuthenticationPrincipal AppUser user, @PathVariable("fridgeID") int id, @RequestBody Fridge fridge){
         //validation
         try {
+            /** Check if user is the administrator */
+            if(!AppUserService.isUserAdmin(user)){
+                return ResponseService.BadRequestResponse("Not allowed");
+            }
+
             fridgeService.update(id, fridge);
 
             return ResponseService.SuccessResponse();
@@ -101,9 +116,14 @@ public class FridgeController {
      * @param id PathVariable (fridgeID) The id of fridge
      */
     @DeleteMapping(path = "/{fridgeID}")
-    public ResponseEntity destroy(@PathVariable("fridgeID") int id){
+    public ResponseEntity destroy(@AuthenticationPrincipal AppUser user, @PathVariable("fridgeID") int id){
         //force not null
         try{
+            /** Check if user is the administrator */
+            if(!AppUserService.isUserAdmin(user)){
+                return ResponseService.BadRequestResponse("Not allowed");
+            }
+
             fridgeService.deleteProduct(id);
 
             return ResponseService.SuccessResponse();

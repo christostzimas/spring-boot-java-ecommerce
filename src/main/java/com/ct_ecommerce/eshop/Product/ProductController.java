@@ -1,9 +1,12 @@
 package com.ct_ecommerce.eshop.Product;
 
+import com.ct_ecommerce.eshop.AppUsers.AppUser;
+import com.ct_ecommerce.eshop.AppUsers.AppUserService;
 import com.ct_ecommerce.eshop.ResponseServices.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,15 +24,17 @@ public class ProductController {
     private final ProductService productService;
 
     private final ResponseService ResponseService;
+    private final AppUserService AppUserService;
 
     /**
      * Constructor
      * @Autowired ** config to be autowired by Spring's dependency injection facilities.
      */
     @Autowired
-    public ProductController(ProductService productService, ResponseService ResponseService){
+    public ProductController(ProductService productService, ResponseService ResponseService, AppUserService appUserService){
         this.productService = productService;
         this.ResponseService = ResponseService;
+        this.AppUserService = appUserService;
     }
 
     /**
@@ -59,8 +64,13 @@ public class ProductController {
      * @Returns http response
      */
     @PostMapping(path = "/create")
-    public ResponseEntity store(@RequestBody Product product){
+    public ResponseEntity store(@AuthenticationPrincipal AppUser user, @RequestBody Product product){
         try{
+            /** Check if user is the administrator */
+            if(!AppUserService.isUserAdmin(user)){
+                return ResponseService.BadRequestResponse("Not allowed");
+            }
+
             productService.addNewProduct(product);
 
             return ResponseService.SuccessResponse();
@@ -84,9 +94,14 @@ public class ProductController {
      * @Returns http response
      */
     @PatchMapping(path = "/{productID}")
-    public ResponseEntity updateStudent(@PathVariable("productID") int id, @RequestBody  Product product){
+    public ResponseEntity updateStudent(@AuthenticationPrincipal AppUser user, @PathVariable("productID") int id, @RequestBody  Product product){
         //validation
         try{
+            /** Check if user is the administrator */
+            if(!AppUserService.isUserAdmin(user)){
+                return ResponseService.BadRequestResponse("Not allowed");
+            }
+
             productService.updateProduct(id, product);
 
             return ResponseService.SuccessResponse();
@@ -109,9 +124,14 @@ public class ProductController {
      * @Returns http response
      */
     @DeleteMapping(path = "/{productID}")
-    public ResponseEntity destroy(@PathVariable("productID") int id){
+    public ResponseEntity destroy(@AuthenticationPrincipal AppUser user, @PathVariable("productID") int id){
         //force not null
         try{
+            /** Check if user is the administrator */
+            if(!AppUserService.isUserAdmin(user)){
+                return ResponseService.BadRequestResponse("Not allowed");
+            }
+
             productService.deleteProduct(id);
 
             return ResponseService.SuccessResponse();

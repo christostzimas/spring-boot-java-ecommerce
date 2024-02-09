@@ -1,9 +1,12 @@
 package com.ct_ecommerce.eshop.Product.MobilePhones;
 
+import com.ct_ecommerce.eshop.AppUsers.AppUser;
+import com.ct_ecommerce.eshop.AppUsers.AppUserService;
 import com.ct_ecommerce.eshop.ResponseServices.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,15 +23,17 @@ public class MobilePhonesController {
 
     private final MobilePhonesService MobilePhoneService;
     private final ResponseService ResponseService;
+    private final AppUserService AppUserService;
 
     /**
      * Constructor
      * @Autowired ** config to be autowired by Spring's dependency injection facilities.
      */
     @Autowired
-    public MobilePhonesController(MobilePhonesService mobilePhoneService, ResponseService ResponseService){
+    public MobilePhonesController(MobilePhonesService mobilePhoneService, ResponseService ResponseService, AppUserService appUserService){
         this.MobilePhoneService = mobilePhoneService;
         this.ResponseService = ResponseService;
+        this.AppUserService = appUserService;
     }
 
     /**
@@ -58,9 +63,14 @@ public class MobilePhonesController {
      * @Returns http response
      */
     @PostMapping(path = "/create")
-    public ResponseEntity store(@RequestBody MobilePhones mobilePhone) {
+    public ResponseEntity store(@AuthenticationPrincipal AppUser user, @RequestBody MobilePhones mobilePhone) {
         //store nre mobile object
         try {
+            /** Check if user is the administrator */
+            if(!AppUserService.isUserAdmin(user)){
+                return ResponseService.BadRequestResponse("Not allowed");
+            }
+
             MobilePhoneService.store(mobilePhone);
 
             return ResponseService.SuccessResponse();
@@ -84,9 +94,14 @@ public class MobilePhonesController {
      * @Returns http response
      */
     @PatchMapping(path = "/{phoneID}")
-    public ResponseEntity updateStudent(@PathVariable("phoneID") int id, @RequestBody MobilePhones phone){
+    public ResponseEntity updateStudent(@AuthenticationPrincipal AppUser user, @PathVariable("phoneID") int id, @RequestBody MobilePhones phone){
         //validation
         try {
+            /** Check if user is the administrator */
+            if(!AppUserService.isUserAdmin(user)){
+                return ResponseService.BadRequestResponse("Not allowed");
+            }
+
             MobilePhoneService.update(id, phone);
 
             return ResponseService.SuccessResponse();
@@ -108,8 +123,13 @@ public class MobilePhonesController {
      * @Returns http response
      */
     @DeleteMapping(path = "/{phoneID}")
-    public ResponseEntity destroy(@PathVariable("phoneID") int id){
+    public ResponseEntity destroy(@AuthenticationPrincipal AppUser user, @PathVariable("phoneID") int id){
         try {
+            /** Check if user is the administrator */
+            if(!AppUserService.isUserAdmin(user)){
+                return ResponseService.BadRequestResponse("Not allowed");
+            }
+
             MobilePhoneService.destroy(id);
 
             return ResponseService.SuccessResponse();
