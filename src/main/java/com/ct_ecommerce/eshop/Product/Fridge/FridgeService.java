@@ -44,7 +44,7 @@ public class FridgeService {
     /**
      * Add new product in fridge category
      * @param fridge ** fridge object contenting super for save
-     * @Errors ** IllegalStateException if product exists + general
+     * @Errors ** IllegalStateException, IllegalArgumentException, OptimisticLockingFailureException
      */
     @Transactional
     public void addNewProduct(Fridge fridge) {
@@ -68,7 +68,7 @@ public class FridgeService {
      * Update existing fridge by id
      * @param id ** id of saved fridge
      * @param updatedFridge ** updated data
-     * @Errors ** IllegalStateException if product does not exist + general
+     * @Errors ** IllegalStateException, IllegalArgumentException, OptimisticLockingFailureException
      */
     public void update(int id, Fridge updatedFridge) {
 
@@ -102,7 +102,7 @@ public class FridgeService {
     /**
      * Delete existing fridge by id
      * @param id ** id of saved fridge
-     * @Errors ** IllegalStateException if the user does not exist + general
+     * @Errors ** IllegalStateException, IllegalArgumentException
      */
     public void deleteProduct(int id){
         boolean exists = FridgeRepository.existsById(id);

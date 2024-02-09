@@ -29,7 +29,7 @@ public class MobilePhonesService {
 
     /**
      * Get all products in mobile phones category
-     * @Errors ** IllegalStateException if no products found
+     * @Errors ** IllegalStateException, Exception
      * @returns List with all products in fridge category.
      */
     public List<MobilePhones> getAll(){
@@ -47,7 +47,7 @@ public class MobilePhonesService {
     /**
      * Add new product in mobile phones category
      * @param phone ** mobile phone object contenting super for save
-     * @Errors ** IllegalStateException if product exists + general
+     * @Errors ** IllegalStateException, IllegalArgumentException, OptimisticLockingFailureException
      */
     @Transactional
     public void store(MobilePhones phone){
@@ -69,7 +69,7 @@ public class MobilePhonesService {
      * Update existing mobile phone by id
      * @param id ** id of saved mobile phone
      * @param phone ** updated data
-     * @Errors ** IllegalStateException if product does not exist + general
+     * @Errors ** IllegalStateException, IllegalArgumentException, OptimisticLockingFailureException
      */
     public void update(int id, MobilePhones phone){
         /** check if phone exists */
@@ -109,7 +109,7 @@ public class MobilePhonesService {
     /**
      * Delete existing mobile phone by id
      * @param id ** id of saved mobile phone
-     * @Errors ** IllegalStateException if the user does not exist + general
+     * @Errors ** IllegalStateException, IllegalArgumentException
      */
     public void destroy(int id){
         //check if phone exists

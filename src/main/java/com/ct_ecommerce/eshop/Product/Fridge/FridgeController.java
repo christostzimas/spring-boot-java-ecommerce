@@ -14,6 +14,7 @@ import java.util.List;
  * Controller for all requests for products in fridge category
  * @Variable fridgeService ** service layer for fridges.
  * @Variable ResponseService ** service used to pass http responses to client
+ * @Variable AppUserService ** used to check if user is admin
  * @RequestMapping("/api/products/fridge") ** route prefix
  */
 @RestController
@@ -37,7 +38,7 @@ public class FridgeController {
     /**
      * Get all products from fridge category
      * @GetMapping ** = get request.
-     * @Errors IllegalStateException, RuntimeException
+     * @Errors IllegalStateException, Exception
      * @Returns http response
      */
     @GetMapping
@@ -62,6 +63,7 @@ public class FridgeController {
      * @PostMapping ** = post request.
      * @RequestBody ** = body of the request
      * @param fridge The new fridge object
+     * @Errors ** IllegalStateException, Exception
      * @Returns http response
      */
     @PostMapping(path = "/create")
@@ -89,6 +91,7 @@ public class FridgeController {
      * @PatchMapping ** annotation
      * @param id PathVariable (fridgeID) The id of fridge for update
      * @param fridge The updated fridge product
+     * @Errors ** IllegalStateException, Exception
      * @Returns http response
      */
     @PatchMapping(path = "/{fridgeID}")
@@ -114,6 +117,7 @@ public class FridgeController {
      * Delete fridge and super object
      * @PatchMapping ** = delete request.
      * @param id PathVariable (fridgeID) The id of fridge
+     * @Errors ** IllegalStateException, Exception
      */
     @DeleteMapping(path = "/{fridgeID}")
     public ResponseEntity destroy(@AuthenticationPrincipal AppUser user, @PathVariable("fridgeID") int id){

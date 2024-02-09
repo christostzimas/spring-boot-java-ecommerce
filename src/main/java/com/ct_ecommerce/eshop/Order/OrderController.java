@@ -43,7 +43,7 @@ public class OrderController {
      * Get all orders for specific user
      * @GetMapping ** = get request.
      * @param user The authenticated user
-     * @Errors RuntimeException
+     * @Errors IllegalStateException, Exception
      * @Returns http response
      */
     @GetMapping("/my-orders")
@@ -64,7 +64,7 @@ public class OrderController {
      * @PostMapping ** = post request.
      * @param user The authenticated user
      * @param recievedOrder The order information
-     * @Errors IllegalStateException, RuntimeException
+     * @Errors IllegalStateException, OptimisticLockingFailureException, Exception
      * @Returns http response
      */
     @PostMapping("/submit-new-order")

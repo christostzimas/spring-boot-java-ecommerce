@@ -15,6 +15,7 @@ import java.util.List;
  * Controller for all requests for products
  * @Variable productService ** service layer for products.
  * @Variable ResponseService ** service used to pass http responses to client
+ * @Variable AppUserService ** used to check if user is admin
  * @RequestMapping("/api/products") ** route prefix
  */
 @RestController
@@ -22,7 +23,6 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-
     private final ResponseService ResponseService;
     private final AppUserService AppUserService;
 

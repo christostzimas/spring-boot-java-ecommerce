@@ -15,6 +15,7 @@ import java.util.List;
  * Controller for all requests for products in mobile phone category
  * @Variable MobilePhoneService ** service layer for mobile phones.
  * @Variable ResponseService ** service used to pass http responses to client
+ * @Variable AppUserService ** used to check if user is admin
  * @RequestMapping("/api/products/mobile") ** route prefix
  */
 @RestController
@@ -39,6 +40,7 @@ public class MobilePhonesController {
     /**
      * Get all mobile phones
      * @GetMapping ** = get request.
+     * @Errors IllegalStateException, IllegalArgumentException, Exception
      * @Returns http response
      */
     @GetMapping
@@ -60,6 +62,7 @@ public class MobilePhonesController {
      * Create new mobile phone
      * @PostMapping ** = post request.
      * @param mobilePhone The mobile phone object (body of the request)
+     * @Errors IllegalStateException, IllegalArgumentException, OptimisticLockingFailureException, Exception
      * @Returns http response
      */
     @PostMapping(path = "/create")
@@ -91,6 +94,7 @@ public class MobilePhonesController {
      * @PatchMapping ** annotation
      * @param id (PathVariable) The id of mobile phone.
      * @param phone (RequestBody) The mobile phone object
+     * @Errors IllegalStateException, IllegalArgumentException, OptimisticLockingFailureException, Exception
      * @Returns http response
      */
     @PatchMapping(path = "/{phoneID}")
@@ -120,6 +124,7 @@ public class MobilePhonesController {
      * Delete mobile phone by id
      * @DeleteMapping ** = delete request.
      * @param id (PathVariable) The id of mobile phone
+     * @Errors IllegalStateException, IllegalArgumentException, Exception
      * @Returns http response
      */
     @DeleteMapping(path = "/{phoneID}")

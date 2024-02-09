@@ -30,7 +30,7 @@ public class OrderService {
     /**
      * Get all orders for specific user
      * @param user The authenticated user.
-     * @Errors ** IllegalStateException, RuntimeException
+     * @Errors ** IllegalStateException, Exception
      * @Returns List of all the user orders
      */
     public List<Order> getUserOrders(AppUser user){
@@ -47,7 +47,7 @@ public class OrderService {
     /**
      * Get order by order_number
      * @param orderNo The order number.
-     * @Errors RuntimeException
+     * @Errors Exception
      * @Returns The order with specific order number
      */
     public Order getOrderByOrderNumber(Long orderNo){
@@ -57,7 +57,7 @@ public class OrderService {
     /**
      * Save new order
      * @param order The order object
-     * @Errors RuntimeException
+     * @Errors Exception
      */
     @Transactional
     public Order saveNewOrder(Order order) {
@@ -67,7 +67,7 @@ public class OrderService {
     /**
      * Delete order by id
      * @param id The id of the order
-     * @Errors RuntimeException
+     * @Errors IllegalArgumentException, RuntimeException
      */
     public void deleteByID(int id){
         try{

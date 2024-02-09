@@ -32,6 +32,7 @@ public class AppUserController {
      * Create new user
      * @PostMapping ** = post request.
      * @param registrationUser The information of the new user
+     * @Errors IllegalArgumentException, RuntimeException
      */
     @PostMapping(path = "/register")
     public ResponseEntity store(@RequestBody AppUser registrationUser){
