@@ -32,7 +32,14 @@ public class SecurityConfig {
         http.authorizeHttpRequests((authorize) ->
                 authorize
                         // Specific exclusions or rules.
-                        .requestMatchers("/api/products", "/api/products/fridge", "/api/products/mobile","/api/user/login", "/api/user/register").permitAll()
+                        .requestMatchers(
+                                "/api/products",
+                                "/api/products/fridge",
+                                "/api/products/mobile",
+                                "/api/user/login",
+                                "/api/user/register",
+                                "/api/products/reviews/**"
+                        ).permitAll()
                         .anyRequest().authenticated());
         return http.build();
     }
